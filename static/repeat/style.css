@@ -1,0 +1,365 @@
+/* General */
+
+* {
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    list-style: none;
+    line-height: 1.1rem;
+    font-family: inherit;
+    -webkit-font-smoothing: antialiased;
+}
+
+:root {
+    --fontSize: clamp(2rem, 3vw, 2.6rem);
+    --backgroundColor: hsl(0, 0%, 100%);
+    --textColor: hsl(0, 0%, 0%);
+    --backgroundColor: hsl(318.96, 94.57%, 90.79%);
+    --textColor: hsl(223.83, 100%, 50%);
+    --borderWidth: 2px;
+    --lineHeight: 1.3rem;
+    --padding: .8rem;
+    --buttonHeight: calc(var(--fontSize) * .7);
+}
+
+html {
+    font-size: var(--fontSize);
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    font-family: "AkkuratLLWebPan-Regular";
+    font-feature-settings: "ss02";
+    background: var(--backgroundColor);
+    color: var(--textColor);
+    display: grid;
+    grid-template-rows: 100%;
+    overflow: hidden;
+}
+@media (min-width: 501px) {
+    body {
+        grid-template-columns: 35vw 1fr;
+    }
+}
+@media (max-width: 500px) {
+    body {
+        grid-template-columns: 100% 0;
+    }
+    :root:not([data-vocablist-mode="none"]) body {
+        grid-template-columns: 0 100%;
+    }
+}
+
+/* Modifiers */
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.row {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    border-bottom: var(--borderWidth) solid var(--textColor);
+    overflow: hidden;
+    padding: calc(var(--padding) * .25) 0;
+}
+
+.avatar {
+    background-size: contain !important;
+}
+
+.spaceBetween {
+    justify-content: space-between;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.noPointerEvents {
+    pointer-events: none;
+}
+
+.textOverflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+}
+
+.dottedBorder {
+    border-bottom-style: dotted;
+}
+
+.fullWidth {
+    width: 100%;
+    flex-shrink: 1;
+}
+
+/* Buttonbar */
+
+header {
+    display: flex;
+    position: sticky;
+    z-index: 943;
+    overflow-x: auto;
+    gap: .5rem;
+    flex-shrink: 0;
+}
+@media (min-width: 500px) {
+    header {
+        top: 0;
+    }
+}
+@media (max-width: 500px) {
+    header {
+        bottom: 0;
+        order: 1;
+        padding: var(--padding);
+    }
+}
+
+fieldset {
+    border: none;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    flex-shrink: 0;
+}
+
+fieldset.buttonGroup {
+    gap: .2rem;
+}
+
+button {
+    color: var(--textColor);
+    background: var(--backgroundColor);
+    border: 2px solid var(--textColor);
+    border-radius: 100vw;
+    height: var(--buttonHeight);
+    padding: 0 2ex;
+    font-family: "AkkuratLLWebPan-Bold";
+    font-size: .8rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    /* text-transform: uppercase; */
+}
+
+button:hover {
+    background: var(--textColor);
+    color: var(--backgroundColor);
+}
+
+button.githubLogin {
+    font-family: PragmataPro-Regular;
+    font-size: .8rem;
+}
+
+button.circular {
+    width: var(--buttonHeight);
+    padding: 0;
+}
+
+/* Column */
+
+.column {
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 var(--padding);
+}
+
+@media (min-width: 501px) {
+    .column {
+        padding-top: var(--padding);
+    }
+
+    .column::-webkit-scrollbar {
+        width: .4rem;
+    }
+    .column::-webkit-scrollbar-track {
+        background: var(--backgroundColor);
+    }
+    .column::-webkit-scrollbar-thumb {
+        background: var(--textColor);
+    }
+    .column::-webkit-scrollbar:hover {
+        cursor: ns-resize;
+    }
+}
+@media (max-width: 500px) {
+    .column {
+        /* padding-bottom: var(--padding); */
+    }
+}
+
+/* Filelist */
+
+#fileList {
+    flex-grow: 1;
+    border-top: var(--borderWidth) solid var(--textColor);
+}
+@media (min-width: 501px) {
+    #fileList {
+        margin: var(--padding) 0;
+    }
+}
+@media (max-width: 500px) {
+    #fileList, #vocabListEntries, #vocabListHeader {
+        font-size: .8rem !important;
+    }
+
+    #fileList {
+        font-family: "AkkuratLLWebPan-Bold";
+    }
+}
+
+#fileList li {
+    cursor: pointer;
+}
+
+#fileList li:hover::after,
+#fileList li#currentlyLoadedList::after {
+    content: "→";
+    margin-left: 1ex;
+}
+
+#fileList li:not(#currentlyLoadedList):hover::after {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--textColor);
+}
+
+.loading {
+    font-size: 4rem;
+    line-height: initial;
+    font-size: 4rem;
+    text-align: center;
+    line-height: initial;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* --percentage: "50%"; */
+}
+
+.loading::before {
+    animation: rotate 1200ms linear infinite;
+}
+
+@keyframes rotate {
+    0%, 100% {
+        content: var(--percentage, "\\");
+    }
+    25% {
+        content: var(--percentage, "Ⅰ");
+    }
+    50% {
+        content: var(--percentage, "/");
+    }
+    75% {
+        content: var(--percentage, "—");
+    }
+}
+
+/* @keyframes rotate {
+    0%: { content: "a"; }
+    20%: { content: "a"; }
+    40%: { content: "b"; }
+    60%: { content: "d"; }
+} */
+
+
+/* .loading {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: load 1500ms ease-in-out infinite alternate;
+    text-transform: uppercase;
+    white-space: nowrap;
+} */
+
+@keyframes load {
+    from {
+        transform: translateX(-40%);
+    } to {
+        transform: translateX(-60%);
+    }
+}
+
+/* Vocablist */
+
+#vocabList {
+    border-top: var(--borderWidth) solid var(--textColor);
+}
+@media (min-width: 501px) {
+    #vocabList {
+        margin: var(--padding) 0;
+    }
+}
+@media (max-width: 500px) {
+    #vocabList {
+        padding: 0 var(--padding) var(--padding);
+    }
+
+    #vocabList .row {
+        padding: calc(var(--padding) * .05) 0;
+        font-size: .6rem;
+    }
+}
+
+#vocabListHeader {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr;
+    justify-content: space-between;
+    text-transform: uppercase;
+}
+
+#vocabListEntries li {
+    position: relative;
+    display: grid;
+    grid-template-columns: calc(50% - .4rem) calc(50% - .4rem);
+    justify-content: space-between;
+}
+
+main li span {
+    display: block;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+main span[contenteditable] {
+    border-bottom-style: dotted;
+}
+
+main span[contenteditable]:focus {
+    outline: none;
+    border-bottom-style: solid;
+}
+
+main span[contenteditable]::before {
+    border-bottom: var(--borderWidth) dotted var(--textColor);
+}
+
+[data-marked-for-deletion] {
+    display: none !important;
+}
+
+#vocabListHeader span[contenteditable]:nth-child(1):empty::after {
+    content: "TITLE ➀";
+}
+#vocabListHeader span[contenteditable]:nth-child(2):empty::after {
+    content: "TITLE ➁";
+}
+
+#vocabListEntries span[contenteditable]:nth-child(1):empty::after {
+    content: "➀";
+}
+#vocabListEntries span[contenteditable]:nth-child(2):empty::after {
+    content: "➁";
+}

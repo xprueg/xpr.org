@@ -1,0 +1,5 @@
+/node_modules
+/fonts
+/certs
+local.sh
+.DS_Store

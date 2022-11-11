@@ -1,0 +1,6 @@
+{
+  "workspace.color" : 5,
+  "workspace.preview_root" : "static\/",
+  "workspace.preview_type" : "custom",
+  "workspace.preview_url" : "https:\/\/localhost:943\/repeat"
+}

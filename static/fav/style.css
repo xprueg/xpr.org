@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 20px;
+    font-family: PragmataPro-Regular;
+    background: var(--background);
+
+    --background: hsl(325.71, 17.07%, 91.96%);
+    --contrast: black;
+}
+
+body {
+    padding: 2rem;
+}
+
+ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    padding-top: .5rem;
+    list-style: none;
+    font-size: 0;
+}
+
+li {
+    border: 1px dashed var(--contrast);
+    border-radius: 1rem;
+    display: inline-block;
+    padding: .2em .5em;
+    font-size: 1rem;
+    background: var(--background);
+    cursor: pointer;
+}
+
+li:hover {
+    background: var(--contrast);
+    color: var(--background);
+    border-color: var(--contrast);
+}
+
+li a {
+    color: inherit;
+    text-decoration: none;
+}
+
+[data-type]::before {
+    padding-right: .5ex;
+}
+
+[data-type="web"]::before {
+    content: "☺";
+}
+
+[data-type="music"]::before {
+    content: "";
+}
+
+[data-type="buy"]::before {
+    content: "";
+}
+
+[data-type="read_later"]::before {
+    content: "";
+}
+
+[data-type="inspiration"]::before {
+    content: "♺";
+}
+
+input {
+    display: none;
+}
+
+label, #search {
+    border: 1px solid var(--contrast);
+    border-radius: 1rem;
+    background: var(--background);
+    display: inline-block;
+    padding: .2em .5em;
+    font-size: 1rem;
+    cursor: pointer;
+    position: sticky;
+    top: 2rem;
+    z-index: 943;
+}
+
+input:checked + label {
+    background: var(--contrast);
+color: var(--background);
+border-color: var(--contrast);
+}
+
+#music:not(:checked) ~ ul [data-type="music"],
+#at:not(:checked) ~ ul [data-type="web"],
+#inspiration:not(:checked) ~ ul [data-type="inspiration"],
+#buy:not(:checked) ~ ul [data-type="buy"],
+#read_later:not(:checked) ~ ul [data-type="read_later"] {
+    display: none;
+}
+
+#all:checked ~ ul li {
+    display: initial !important;
+}
+
+#all:not(:checked) ~ ul li {
+    width: 100%;
+    border-radius: .3rem;
+}
+
+#all:not(:checked) ~ ul li a::after {
+    content: attr(href);
+    padding-left: 1.3em;
+    display: block;
+    opacity: .7;
+    text-transform: uppercase;
+    font-feature-settings: "c2sc";
+}
+
+#search::before {
+    content: "";
+    padding-right: .5ex;
+}

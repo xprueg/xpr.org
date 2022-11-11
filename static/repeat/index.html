@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" id="root">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Forced Repetition</title>
+        <meta name="referrer" content="same-origin">
+        <link rel="stylesheet" href="/fonts/fonts.css">
+        <link rel="stylesheet" href="./style.css">
+        <script type="module">
+            import * as State from "./state.mjs";
+
+            // Set default states
+            State.setState("filelist", State.filelist.LOADING);
+            State.setState("user", State.user.LOGGED_OUT);
+            State.setState("vocablist", State.vocablist.HIDDEN);
+        </script>
+    </head>
+    <body>
+        <nav id="fileListSection" class="column">
+            <header>
+                <fieldset class="fullWidth buttonGroup">
+                    <button class="fullWidth" data-action="NEWFILE">New List</button>
+                    <div data-user-show="onLoggedOut">
+                        <a href="/oauth/github/repeat">
+                            <button class="circular githubLogin">&#62472;</button>
+                        </a>
+                    </div>
+                    <fieldset data-user-show="onLoggedIn">
+                        <button class="circular avatar"></button>
+                        <a href="/oauth/github/logout/repeat">
+                            <button title="Logout">↱</button>
+                        </a>
+                    </fieldset>
+                </fieldset>
+            </header>
+
+            <div class="loading" data-filelist-show="onLoading"></div>
+
+            <template id="T<fileListEntry>">
+                <li class="row uppercase spaceBetween" data-filename>
+                    <span class="textOverflow noPointerEvents nowrap"></span>
+                </li>
+            </template>
+            <ol id="fileList" data-filelist-show="onLoaded"></ol>
+        </nav>
+
+        <main id="vocabListSection" class="column" data-vocablist-show="onList onEdit onLoading">
+            <div class="loading" data-vocablist-show="onLoading"><span>®</span></div>
+
+            <header class="spaceBetween">
+                <fieldset class="buttonGroup" data-vocablist-show="onList">
+                    <button  class="circular" data-action="CLOSE">←</button>
+                    <fieldset>
+                        <button class="circular active">1</button>
+                        <button class="circular">2</button>
+                        <button>Test</button>
+                    </fieldset>
+                </fieldset>
+
+                <fieldset class="buttonGroup" data-vocablist-show="onList">
+                    <button data-action="EDIT">Edit</button>
+                    <button data-action="DELETE">Delete</button>
+                </fieldset>
+
+                <button data-vocablist-show="onEdit" data-action="SAVE">Save</button>
+                <button data-vocablist-show="onEdit" data-action="CANCEL">Cancel</button>
+            </header>
+
+            <div id="vocabList" data-vocablist-show="onList onEdit">
+                <template id="T<vocabListHeader>">
+                    <span class="row vocabHeaderEntry"
+                          data-can-contenteditable="true"></span>
+                </template>
+                <div id="vocabListHeader"></div>
+
+                <template id="T<vocabListEntryRow>">
+                    <li class="vocabEntryRow"></li>
+                </template>
+                <template id="T<vocabListEntry>">
+                    <span class="row vocabEntry"
+                          data-tries="0" data-mistakes="0"
+                          data-can-contenteditable="true"></span>
+                </template>
+                <ol id="vocabListEntries"></ol>
+            </div>
+        </main>
+
+        <script src="./script.mjs" type="module"></script>
+    </body>
+</html>

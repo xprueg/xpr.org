@@ -1,0 +1,19 @@
+{
+    "name": "server.xpr.org",
+    "version": "1.0.0",
+    "scripts": {
+        "boot": "npm install && npm run clone_fonts",
+        "clone_fonts": "node clone_fonts.mjs",
+        "start": "node index.mjs"
+    },
+    "dependencies": {
+        "body-parser": "^1.20.0",
+        "express": "^4.17.1",
+        "express-sslify": "^1.2.0",
+        "helmet": "^4.6.0",
+        "pg": "^8.7.3"
+    },
+    "engines": {
+        "node": "v16.15.0"
+    }
+}
