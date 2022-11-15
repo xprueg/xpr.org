@@ -13,6 +13,7 @@ export const vocablist = {
     HIDDEN: "none",
     LIST: "list",
     EDIT: "edit",
+    TEST: "test",
 };
 
 const states = {

@@ -1,4 +1,6 @@
 import { Filetype } from "./datastore.mjs";
+import vocabEditController from "./vocabEditController.mjs";
+import vocabTestController from "./vocabTestController.mjs";
 
 function* splitArray(array) {
     for (let i = 0; i < array.length; i += 2) {
@@ -9,6 +11,7 @@ function* splitArray(array) {
 export default class VocabController {
     #activeController = null;
     #editController;
+    #testController;
 
     dataStore;
     state;
@@ -33,7 +36,8 @@ export default class VocabController {
         this.dataStore = dataStore;
         this.state = state;
 
-        this.#editController = new vocabEditController(state);
+        this.#editController = new vocabEditController(this, state);
+        this.#testController = new vocabTestController(this, state);
 
         this.dataStore.on("fileOpened", ({ filename }) => {
             if (filename === Filetype.NEW_FILE) {
@@ -61,11 +65,12 @@ export default class VocabController {
 
         this.dataStore.on("fileClosed", ({ filename }) => {
             if (this.#activeController === this.#editController) {
-                // TODO
+                this.#activeController.deactivate("CANCEL");
+                this.#activeController = null;
             } else if (this.#activeController === null) {
                 this.clearContent();
-                this.state.setState("vocablist", this.state.vocablist.HIDDEN);
             }
+            this.state.setState("vocablist", this.state.vocablist.HIDDEN);
         });
 
         document.querySelector("[data-action='DELETE']")
@@ -85,9 +90,7 @@ export default class VocabController {
 
         document.querySelector("[data-action='CANCEL']")
                 .addEventListener("click", _ => {
-                    console.assert(this.#activeController === this.#editController);
-
-                    this.#editController.deactivate("CANCEL");
+                    this.#activeController.deactivate("CANCEL");
                     this.#activeController = null;
 
                     if (this.dataStore.loaded_file === Filetype.NEW_FILE) {
@@ -114,6 +117,20 @@ export default class VocabController {
 
         document.querySelector("[data-action='NEWFILE']")
                 .addEventListener("click", _ => this.dataStore.openFile(Filetype.NEW_FILE));
+
+        document.querySelector(`[data-action="TEST"]`)
+                .addEventListener("click", _ => {
+                    this.#testController.activate();
+                    this.#activeController = this.#testController;
+                });
+    }
+
+    async requestDeactivation(action, do_save) {
+        this.#activeController.deactivate(action);
+        if (do_save)
+            await this.save();
+        this.#activeController = null;
+        this.state.setState("vocablist", this.state.vocablist.LIST);
     }
 
     loadListWithFilename(filename) {
@@ -157,7 +174,7 @@ export default class VocabController {
         this.clearContent(header, entries);
     }
 
-    static spawnEmptyRow() {
+    spawnEmptyRow() {
         const template = document.getElementById("T<vocabListEntryRow>");
         const frag = template.content.cloneNode(true);
         const row = frag.querySelector("li");
@@ -173,150 +190,6 @@ export default class VocabController {
 
         vocabListEntries.append(frag);
 
-        return row;
-    }
-}
-
-class vocabEditController {
-    #abortControllerForEventListener;
-    #scope = {
-        header: vocabListHeader,
-        list: vocabListEntries,
-    };
-
-    constructor(state) {
-        this.state = state;
-    }
-
-    activate() {
-        this.state.setState("vocablist", this.state.vocablist.EDIT);
-
-        this.makeCellsEditable(this.#scope.header);
-        this.makeCellsEditable(this.#scope.list);
-
-        const { signal } = this.#abortControllerForEventListener = new AbortController();
-        this.#scope.list.addEventListener("focus", evt => {
-            const { target } = evt;
-// FIXME Ignore markedForDeletion rows!
-            const is_vocab_entry = target.classList.contains("vocabEntry");
-            const is_last_cell = target.matches("li:last-child span:last-child");
-
-            if (is_vocab_entry && is_last_cell)
-                this.spawnEmptyEditableRow();
-        }, { capture: true, signal });
-
-        this.#scope.list.addEventListener("keydown", evt => {
-            const { shiftKey, key, target } = evt;
-
-            if (shiftKey && key === "Backspace" && target.classList.contains("vocabEntry")) {
-                evt.preventDefault();
-                this.markRowForDeletion(target.closest(".vocabEntryRow"));
-            }
-        }, { signal });
-    }
-
-    ///
-    /// [*] Restore deleted rows on CANCEL
-    /// [>] action :: string CANCEL|SAVE
-    /// [<] void
-    deactivate(action) {
-        this.#abortControllerForEventListener.abort();
-
-        const restore_original_state = action === "CANCEL";
-        this.restoreEditableCells(this.#scope.header, restore_original_state);
-
-        for (const row of this.#scope.list.querySelectorAll("li")) {
-            const is_untracked_row = "untrackedRow" in row.dataset;
-
-            if (restore_original_state) {
-                this.restoreMarkedForDeletionRow(row);
-
-                if (is_untracked_row) {
-                    row.remove();
-                    continue;
-                }
-            } else {
-                const empty_cells = row.querySelectorAll(".vocabEntry:empty");
-                const total_cells = row.querySelectorAll(".vocabEntry");
-                const row_is_empty = empty_cells.length === total_cells.length;
-                if (row_is_empty) {
-                    row.remove();
-                    continue;
-                }
-
-                this.removeMarkedForDeletionRow(row);
-
-                if (is_untracked_row)
-                    row.removeAttribute("data-untracked-row");
-            }
-
-            this.restoreEditableCells(row, restore_original_state);
-        }
-    }
-
-    markRowForDeletion(row) {
-        row.dataset.markedForDeletion = true;
-
-        let previous_sibling_row = row;
-        while (previous_sibling_row = previous_sibling_row.previousElementSibling) {
-            const is_marked_for_deletion = "markedForDeletion" in previous_sibling_row.dataset;
-
-            if (is_marked_for_deletion === false)
-                break;
-        }
-
-        let next_sibling_row = row;
-        while (next_sibling_row = next_sibling_row.nextElementSibling) {
-            const is_marked_for_deletion = "markedForDeletion" in next_sibling_row.dataset;
-
-            if (is_marked_for_deletion === false)
-                break;
-        }
-
-        const sibling = previous_sibling_row ||
-                        next_sibling_row ||
-                        this.spawnEmptyEditableRow();
-
-        sibling.querySelector(".vocabEntry").focus();
-    }
-
-    restoreMarkedForDeletionRow(row) {
-        if ("markedForDeletion" in row.dataset)
-            row.removeAttribute("data-marked-for-deletion");
-    }
-
-    removeMarkedForDeletionRow(row) {
-        if ("markedForDeletion" in row.dataset)
-            row.remove();
-    }
-
-    makeCellsEditable(scope) {
-        for (const cell of scope.querySelectorAll("[data-can-contenteditable]")) {
-            cell.setAttribute("contenteditable", true);
-            cell.dataset.backup = cell.textContent;
-        }
-    }
-
-    /// [>] scope :: HTMLElement
-    /// [>] restore_backup_data :: boolean
-    /// [<] void
-    restoreEditableCells(scope, restore_backup_data) {
-        for (const cell of scope.querySelectorAll("[data-can-contenteditable]")) {
-            cell.removeAttribute("contenteditable");
-
-            if (restore_backup_data)
-                cell.textContent = cell.dataset.backup;
-            else
-                cell.textContent = cell.textContent.trim();
-
-            cell.removeAttribute("data-backup");
-        }
-    }
-
-    spawnEmptyEditableRow() {
-        const row = VocabController.spawnEmptyRow();
-        this.makeCellsEditable(row);
-        row.dataset.untrackedRow = true;
         return row;
     }
 }

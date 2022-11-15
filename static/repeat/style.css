@@ -148,7 +148,7 @@ button {
     /* text-transform: uppercase; */
 }
 
-button:hover {
+button:hover, button.active, input[type="checkbox"]:checked + button {
     background: var(--textColor);
     color: var(--backgroundColor);
 }
@@ -161,6 +161,10 @@ button.githubLogin {
 button.circular {
     width: var(--buttonHeight);
     padding: 0;
+}
+
+input[type="checkbox"] {
+    display: none;
 }
 
 /* Column */
@@ -265,23 +269,6 @@ button.circular {
     }
 }
 
-/* @keyframes rotate {
-    0%: { content: "a"; }
-    20%: { content: "a"; }
-    40%: { content: "b"; }
-    60%: { content: "d"; }
-} */
-
-
-/* .loading {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: load 1500ms ease-in-out infinite alternate;
-    text-transform: uppercase;
-    white-space: nowrap;
-} */
-
 @keyframes load {
     from {
         transform: translateX(-40%);
@@ -319,6 +306,11 @@ button.circular {
     text-transform: uppercase;
 }
 
+#vocabListEntries {
+    display: flex;
+    flex-direction: column;
+}
+
 #vocabListEntries li {
     position: relative;
     display: grid;
@@ -333,33 +325,53 @@ main li span {
     position: relative;
 }
 
-main span[contenteditable] {
+main span[contenteditable="true"] {
+    caret-color : var(--textColor);
+    caret-shape: block;
     border-bottom-style: dotted;
 }
 
-main span[contenteditable]:focus {
+main span[contenteditable="true"]:focus {
     outline: none;
-    border-bottom-style: solid;
-}
-
-main span[contenteditable]::before {
-    border-bottom: var(--borderWidth) dotted var(--textColor);
+    border-bottom-style: dotted;
 }
 
 [data-marked-for-deletion] {
     display: none !important;
 }
 
-#vocabListHeader span[contenteditable]:nth-child(1):empty::after {
+#vocabListHeader span[contenteditable="true"]:nth-child(1):empty::after {
     content: "TITLE ➀";
 }
-#vocabListHeader span[contenteditable]:nth-child(2):empty::after {
+#vocabListHeader span[contenteditable="true"]:nth-child(2):empty::after {
     content: "TITLE ➁";
 }
 
-#vocabListEntries span[contenteditable]:nth-child(1):empty::after {
+#vocabListEntries span[contenteditable="true"]:nth-child(1):empty::after {
     content: "➀";
 }
-#vocabListEntries span[contenteditable]:nth-child(2):empty::after {
+#vocabListEntries span[contenteditable="true"]:nth-child(2):empty::after {
     content: "➁";
+}
+
+/* VocabTestController */
+
+[data-vocablist-mode="test"] #vocabListEntries .vocabEntryRow:not([data-test-row]) {
+    display: none;
+}
+
+[data-test-row="active"],
+[data-test-row="incorrect"] {
+    font-family: "AkkuratLLWebPan-Bold";
+}
+
+[data-test-row="incorrect"] [contenteditable]::before {
+    content: attr(data-original-value);
+    margin-right: .5em;
+}
+
+[data-test-row="incorrect"] [contenteditable]::after {
+    content: attr(data-user-value) !important;
+    text-decoration: line-through;
+    font-family: "AkkuratLLWebPan-Regular";
 }

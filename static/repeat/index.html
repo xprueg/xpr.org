@@ -45,16 +45,18 @@
             <ol id="fileList" data-filelist-show="onLoaded"></ol>
         </nav>
 
-        <main id="vocabListSection" class="column" data-vocablist-show="onList onEdit onLoading">
+        <main id="vocabListSection" class="column" data-vocablist-show="onList onEdit onTest onLoading">
             <div class="loading" data-vocablist-show="onLoading"><span>®</span></div>
 
             <header class="spaceBetween">
-                <fieldset class="buttonGroup" data-vocablist-show="onList">
-                    <button  class="circular" data-action="CLOSE">←</button>
-                    <fieldset>
-                        <button class="circular active">1</button>
-                        <button class="circular">2</button>
-                        <button>Test</button>
+                <fieldset class="buttonGroup" data-vocablist-show="onList onTest">
+                    <button class="circular" data-action="CLOSE">←</button>
+                    <fieldset data-vocablist-show="onList">
+                        <input type="checkbox" name="testRowWithIndex" data-index="1">
+                        <button onclick="this.previousElementSibling.click()" class="circular">1</button>
+                        <input type="checkbox" name="testRowWithIndex" data-index="2" checked>
+                        <button onclick="this.previousElementSibling.click()" class="circular">2</button>
+                        <button data-action="TEST">Test</button>
                     </fieldset>
                 </fieldset>
 
@@ -64,10 +66,10 @@
                 </fieldset>
 
                 <button data-vocablist-show="onEdit" data-action="SAVE">Save</button>
-                <button data-vocablist-show="onEdit" data-action="CANCEL">Cancel</button>
+                <button data-vocablist-show="onEdit onTest" data-action="CANCEL">Cancel</button>
             </header>
 
-            <div id="vocabList" data-vocablist-show="onList onEdit">
+            <div id="vocabList" data-vocablist-show="onList onEdit onTest">
                 <template id="T<vocabListHeader>">
                     <span class="row vocabHeaderEntry"
                           data-can-contenteditable="true"></span>
@@ -80,7 +82,8 @@
                 <template id="T<vocabListEntry>">
                     <span class="row vocabEntry"
                           data-tries="0" data-mistakes="0"
-                          data-can-contenteditable="true"></span>
+                          data-can-contenteditable="true"
+                          spellcheck="false"></span>
                 </template>
                 <ol id="vocabListEntries"></ol>
             </div>
