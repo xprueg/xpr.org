@@ -19,6 +19,8 @@ export default class vocabTestController {
         this.addListener(signal);
 
         this.rows = Array.from(this.scope.list.querySelectorAll(".vocabEntryRow"));
+        document.querySelector(".progress").dataset.dnom = this.rows.length;
+        document.querySelector(".progress").dataset.numr = 1;
 
         this.shuffleRows();
         this.makeOneCellPerRowEditable();
@@ -96,6 +98,7 @@ export default class vocabTestController {
         }
 
         this.row_index = this.rows.length - 1;
+        document.querySelector(".progress").dataset.numr = 1;
         this.activateCurrentRow();
     }
 
@@ -111,6 +114,7 @@ export default class vocabTestController {
 
         const cell = current_row.querySelector(".vocabEntry[contenteditable]");
         cell.dataset.tries = Number(cell.dataset.tries) + 1;
+        document.querySelector(".progress").dataset.numr = Number(document.querySelector(".progress").dataset.numr) + 1;
     }
 
     markCurrentRowAsIncorrect() {

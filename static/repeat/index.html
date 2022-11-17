@@ -49,8 +49,13 @@
             <div class="loading" data-vocablist-show="onLoading"><span>®</span></div>
 
             <header class="spaceBetween">
-                <fieldset class="buttonGroup" data-vocablist-show="onList onTest">
-                    <button class="circular" data-action="CLOSE">←</button>
+                <fieldset>
+                    <button data-vocablist-show="onTest onList onEdit" class="circular" data-action="CLOSE">←</button>
+                </fieldset>
+                <fieldset>
+                    <div class="progress" data-vocablist-show="onTest">/</div>
+                </fieldset>
+                <fieldset class="buttonGroup">
                     <fieldset data-vocablist-show="onList">
                         <input type="checkbox" name="testRowWithIndex" data-index="1">
                         <button onclick="this.previousElementSibling.click()" class="circular">1</button>
@@ -58,15 +63,11 @@
                         <button onclick="this.previousElementSibling.click()" class="circular">2</button>
                         <button data-action="TEST">Test</button>
                     </fieldset>
+                    <button data-vocablist-show="onList" data-action="EDIT">Edit</button>
+                    <button data-vocablist-show="onList" data-action="DELETE">Delete</button>
+                    <button data-vocablist-show="onEdit" data-action="SAVE">Save</button>
+                    <button data-vocablist-show="onEdit onTest" data-action="CANCEL">Cancel</button>
                 </fieldset>
-
-                <fieldset class="buttonGroup" data-vocablist-show="onList">
-                    <button data-action="EDIT">Edit</button>
-                    <button data-action="DELETE">Delete</button>
-                </fieldset>
-
-                <button data-vocablist-show="onEdit" data-action="SAVE">Save</button>
-                <button data-vocablist-show="onEdit onTest" data-action="CANCEL">Cancel</button>
             </header>
 
             <div id="vocabList" data-vocablist-show="onList onEdit onTest">

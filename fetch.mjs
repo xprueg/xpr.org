@@ -9,8 +9,6 @@ export function POST(url, opts) {
         body = JSON.stringify(body);
 
     const method = opts.method || "POST";
-console.info(body);
-    console.info(`POST ${url}`);
 
     if (body.length)
         Object.assign(headers, {
@@ -20,13 +18,10 @@ console.info(body);
 
     return new Promise((resolve, reject) => {
         const options = { method, hostname, path, headers };
-        console.info(options);
         const req = https.request(options, res => {
-            console.log('statusCode:', res.statusCode);
-
             let data = String();
             res.on("data", chunk => { data += chunk });
-            res.on("end", () => { resolve(JSON.parse(data)) });
+            res.on("end", () => resolve({ status: res.statusCode, body: JSON.parse(data) } ));
         });
 
         req.write(body);

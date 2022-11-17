@@ -39,13 +39,13 @@ router.post("/api/save", fetchAccessToken, body_parser.json(), async (req, res) 
     if (gist_id === undefined)
         return res.status(500).send("NO_GIST_ID").end();
 
-    const gist = await POST(`api.github.com/gists/${gist_id}`, {
+    const { status, body } = await POST(`api.github.com/gists/${gist_id}`, {
         method: "PATCH",
         headers: getHeaders(req.access_token),
         body: { files: req.body },
     });
 
-    res.status(200).json(gist).end();
+    res.status(status).json(body).end();
 });
 
 async function getGistId(access_token) {
