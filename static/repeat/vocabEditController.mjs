@@ -24,9 +24,9 @@ export default class vocabEditController {
             const { target } = evt;
 // FIXME Ignore markedForDeletion rows!
             const is_vocab_entry = target.classList.contains("vocabEntry");
-            const is_last_cell = target.matches("li:last-child span:last-child");
+            const is_last_row = target.matches("li:last-child span");
 
-            if (is_vocab_entry && is_last_cell)
+            if (is_vocab_entry && is_last_row)
                 this.spawnEmptyEditableRow();
         }, { capture: true, signal });
 

@@ -36,6 +36,6 @@ for (const type of Object.keys(states)) {
         rules.push(`:root[data-${type}-mode="${state}"] [data-${type}-show]:not([data-${type}-show~="on${state.replace(/^./, c => c.toUpperCase())}"])`);
     }
     const style = document.createElement("style");
-    style.textContent = `${rules.join(",")} { display: none; }`;
+    style.textContent = `${rules.join(",")} { display: none !important; }`;
     document.head.append(style);
 }

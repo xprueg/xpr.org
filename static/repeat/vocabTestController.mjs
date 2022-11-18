@@ -37,7 +37,7 @@ export default class vocabTestController {
             if (document.querySelector("[data-test-row='incorrect']"))
                 return this.rollback();
 
-            if (target.textContent.trim() === target.dataset.originalValue) {
+            if (target.textContent.trim().toLowerCase() === target.dataset.originalValue.toLowerCase()) {
                 this.markCurrentRowAsCorrect();
 
                 if (this.row_index === 0)

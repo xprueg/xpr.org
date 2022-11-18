@@ -22,6 +22,9 @@
     --padding: .8rem;
     --buttonHeight: calc(var(--fontSize) * .7);
 }
+@media (max-width: 500px) {
+    --fontSize: clamp(1.6rem, 3vw, 2.6rem);
+}
 
 html {
     font-size: var(--fontSize);
@@ -126,13 +129,14 @@ header {
 @media (min-width: 500px) {
     header {
         top: 0;
+        padding: var(--padding) var(--padding) 0;
     }
 }
 @media (max-width: 500px) {
     header {
         bottom: 0;
         order: 1;
-        padding: var(--padding);
+        padding-bottom: var(--padding);
     }
 }
 
@@ -156,10 +160,9 @@ button {
     height: var(--buttonHeight);
     padding: 0 2ex;
     font-family: "AkkuratLLWebPan-Bold";
-    font-size: .8rem;
+    font-size: .7rem;
     cursor: pointer;
     flex-shrink: 0;
-    /* text-transform: uppercase; */
 }
 
 button:hover, button.active, input[type="checkbox"]:checked + button {
@@ -188,14 +191,8 @@ input[type="checkbox"] {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    padding: 0 var(--padding);
 }
-
 @media (min-width: 501px) {
-    .column {
-        padding-top: var(--padding);
-    }
-
     .column::-webkit-scrollbar {
         width: .4rem;
     }
@@ -209,35 +206,28 @@ input[type="checkbox"] {
         cursor: ns-resize;
     }
 }
-@media (max-width: 500px) {
-    .column {
-        /* padding-bottom: var(--padding); */
-    }
-}
 
 /* Filelist */
 
 #fileList {
     flex-grow: 1;
-    border-top: var(--borderWidth) solid var(--textColor);
-}
-@media (min-width: 501px) {
-    #fileList {
-        margin: var(--padding) 0;
-    }
+    padding: var(--padding);
 }
 @media (max-width: 500px) {
-    #fileList, #vocabListEntries, #vocabListHeader {
-        font-size: .8rem !important;
-    }
-
     #fileList {
         font-family: "AkkuratLLWebPan-Bold";
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
     }
 }
 
 #fileList li {
     cursor: pointer;
+}
+
+#fileList li:first-child {
+    border-top: var(--borderWidth) solid var(--textColor);
 }
 
 #fileList li::after {
@@ -298,18 +288,10 @@ input[type="checkbox"] {
 /* Vocablist */
 
 #vocabList {
-    border-top: var(--borderWidth) solid var(--textColor);
-}
-@media (min-width: 501px) {
-    #vocabList {
-        margin: var(--padding) 0;
-    }
+    flex-grow: 1;
+    padding: var(--padding);
 }
 @media (max-width: 500px) {
-    #vocabList {
-        padding: 0 var(--padding) var(--padding);
-    }
-
     #vocabList .row {
         padding: calc(var(--padding) * .05) 0;
         font-size: .6rem;
@@ -322,6 +304,8 @@ input[type="checkbox"] {
     grid-template-columns: 1fr;
     justify-content: space-between;
     text-transform: uppercase;
+    font-family: "AkkuratLLWebPan-Bold";
+    border-bottom: var(--borderWidth) solid var(--textColor);
 }
 
 #vocabListEntries {
@@ -333,6 +317,8 @@ input[type="checkbox"] {
     position: relative;
     display: grid;
     grid-template-columns: calc(50% - .4rem) calc(50% - .4rem);
+    grid-template-columns: repeat(2, 1fr);
+    gap: .6rem;
     justify-content: space-between;
 }
 
