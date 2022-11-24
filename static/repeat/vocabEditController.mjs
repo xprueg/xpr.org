@@ -63,6 +63,9 @@ export default class vocabEditController {
                     continue;
                 }
             } else {
+                for (const cell of row.querySelectorAll(".vocabEntry"))
+                    cell.textContent = cell.textContent.trim();
+
                 const empty_cells = row.querySelectorAll(".vocabEntry:empty");
                 const total_cells = row.querySelectorAll(".vocabEntry");
                 const row_is_empty = empty_cells.length === total_cells.length;

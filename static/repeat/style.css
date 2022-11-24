@@ -45,6 +45,10 @@ body {
     body {
         grid-template-columns: 35vw 1fr;
     }
+
+    [data-vocablist-mode="none"] body {
+        grid-template-columns: 100% 0;
+    }
 }
 @media (max-width: 500px) {
     body {
@@ -299,13 +303,12 @@ input[type="checkbox"] {
 }
 
 #vocabListHeader {
-    display: grid;
-    align-items: center;
-    grid-template-columns: 1fr;
-    justify-content: space-between;
     text-transform: uppercase;
     font-family: "AkkuratLLWebPan-Bold";
-    border-bottom: var(--borderWidth) solid var(--textColor);
+    border: var(--borderWidth) solid var(--textColor);
+    border-radius: 100%;
+    padding: calc(var(--padding) * .25) 0;
+    text-align: center;
 }
 
 #vocabListEntries {
@@ -335,11 +338,13 @@ main span[contenteditable="true"] {
     caret-color : var(--textColor);
     caret-shape: block;
     border-bottom-style: dotted;
+    border-bottom-width: var(--borderWidth);
 }
 
 main span[contenteditable="true"]:focus {
     outline: none;
     border-bottom-style: dotted;
+    border-bottom-width: var(--borderWidth);
 }
 
 [data-marked-for-deletion] {
