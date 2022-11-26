@@ -45,10 +45,10 @@ export default class VocabController {
                 const header_frag = header_template.content.cloneNode(true);
                 vocabListHeader.replaceChildren(header_frag);
 
-                const row_template = document.getElementById("T<vocabListEntryRow>");
+                const row_template = document.getElementById("T<vocabEntryRow>");
                 const row_frag = row_template.content.cloneNode(true);
                 for (let i = 0; i < 2; ++i) {
-                    const template = document.getElementById("T<vocabListEntry>");
+                    const template = document.getElementById("T<vocabEntry>");
                     const frag = template.content.cloneNode(true);
                     const vocab = frag.querySelector(".vocabEntry");
 
@@ -152,11 +152,11 @@ export default class VocabController {
         header.querySelector(".vocabHeaderEntry").textContent = filename;
 
         const entries = contents.map(row => {
-            const template = document.getElementById("T<vocabListEntryRow>");
+            const template = document.getElementById("T<vocabEntryRow>");
             const entry_row = template.content.cloneNode(true);
 
             const vocabs = row.map(entry => {
-                const template = document.getElementById("T<vocabListEntry>");
+                const template = document.getElementById("T<vocabEntry>");
                 const frag = template.content.cloneNode(true);
                 const vocab = frag.querySelector(".vocabEntry");
 
@@ -175,12 +175,12 @@ export default class VocabController {
     }
 
     spawnEmptyRow() {
-        const template = document.getElementById("T<vocabListEntryRow>");
+        const template = document.getElementById("T<vocabEntryRow>");
         const frag = template.content.cloneNode(true);
         const row = frag.querySelector("li");
 
         const vocabs = [undefined, undefined].map(entry => {
-            const template = document.getElementById("T<vocabListEntry>");
+            const template = document.getElementById("T<vocabEntry>");
             const frag = template.content.cloneNode(true);
             const vocab = frag.querySelector(".vocabEntry");
 

@@ -34,6 +34,7 @@ export default class vocabTestController {
             if (!target.classList.contains("vocabEntry") || key !== "Enter")
                 return;
 
+            evt.preventDefault();
             if (document.querySelector("[data-test-row='incorrect']"))
                 return this.rollback();
 

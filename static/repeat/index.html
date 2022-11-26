@@ -38,9 +38,7 @@
             <div class="loading" data-filelist-show="onLoading"></div>
 
             <template id="T<fileListEntry>">
-                <li class="row uppercase spaceBetween" data-filename>
-                    <span class="textOverflow noPointerEvents nowrap"></span>
-                </li>
+                <li class="uppercase" data-filename></li>
             </template>
             <ol id="fileList" data-filelist-show="onLoaded"></ol>
         </nav>
@@ -77,11 +75,11 @@
                 </template>
                 <div id="vocabListHeader"></div>
 
-                <template id="T<vocabListEntryRow>">
+                <template id="T<vocabEntryRow>">
                     <li class="vocabEntryRow"></li>
                 </template>
-                <template id="T<vocabListEntry>">
-                    <span class="row vocabEntry"
+                <template id="T<vocabEntry>">
+                    <span class="vocabEntry"
                           data-tries="0" data-mistakes="0"
                           data-can-contenteditable="true"
                           spellcheck="false"></span>

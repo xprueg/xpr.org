@@ -6,7 +6,7 @@
     font-size: inherit;
     font-weight: inherit;
     list-style: none;
-    line-height: 1.1rem;
+    line-height: 1;
     font-family: inherit;
     -webkit-font-smoothing: antialiased;
 }
@@ -23,7 +23,9 @@
     --buttonHeight: calc(var(--fontSize) * .7);
 }
 @media (max-width: 500px) {
-    --fontSize: clamp(1.6rem, 3vw, 2.6rem);
+    :root {
+        --borderWidth: 1px;
+    }
 }
 
 html {
@@ -63,16 +65,6 @@ body {
 
 .nowrap {
     white-space: nowrap;
-}
-
-.row {
-    box-sizing: border-box;
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    border-bottom: var(--borderWidth) solid var(--textColor);
-    overflow: hidden;
-    padding: calc(var(--padding) * .25) 0;
 }
 
 .avatar {
@@ -210,16 +202,24 @@ input[type="checkbox"] {
         cursor: ns-resize;
     }
 }
+@media (max-width: 500px) {
+    .column {
+        gap: var(--padding);
+    }
+}
 
 /* Filelist */
 
 #fileList {
     flex-grow: 1;
-    padding: var(--padding);
+}
+@media (min-width: 501px) {
+    #fileList {
+        padding: var(--padding);
+    }
 }
 @media (max-width: 500px) {
     #fileList {
-        font-family: "AkkuratLLWebPan-Bold";
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -228,6 +228,13 @@ input[type="checkbox"] {
 
 #fileList li {
     cursor: pointer;
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-bottom: var(--borderWidth) solid var(--textColor);
+    padding: calc(var(--padding) * .25) 0;
+    min-height: 1.5em;
 }
 
 #fileList li:first-child {
@@ -240,13 +247,22 @@ input[type="checkbox"] {
 
 #fileList li:hover::after,
 #fileList li#currentlyLoadedList::after {
-    content: "→";
-    margin-left: 1ex;
+    content: "●";
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "AkkuratLLWebPan-Bold";
+    background: var(--textColor);
+    color: var(--backgroundColor);
+    mix-blend-mode: exclusion;
+    width: 100%;
+    height: 100%;
 }
 
 #fileList li:not(#currentlyLoadedList):hover::after {
-    color: transparent;
-    -webkit-text-stroke: 1px var(--textColor);
+    content: "○";
 }
 
 .loading {
@@ -293,7 +309,11 @@ input[type="checkbox"] {
 
 #vocabList {
     flex-grow: 1;
-    padding: var(--padding);
+}
+@media (min-width: 501px) {
+    #vocabList {
+        padding: var(--padding);
+    }
 }
 @media (max-width: 500px) {
     #vocabList .row {
@@ -306,9 +326,10 @@ input[type="checkbox"] {
     text-transform: uppercase;
     font-family: "AkkuratLLWebPan-Bold";
     border: var(--borderWidth) solid var(--textColor);
-    border-radius: 100%;
-    padding: calc(var(--padding) * .25) 0;
+    border-radius: 50%;
+    padding: calc(var(--padding) * .5) 0;
     text-align: center;
+    word-break: break-word;
 }
 
 #vocabListEntries {
@@ -316,22 +337,30 @@ input[type="checkbox"] {
     flex-direction: column;
 }
 
-#vocabListEntries li {
+#vocabListEntries .vocabEntryRow {
     position: relative;
     display: grid;
-    grid-template-columns: calc(50% - .4rem) calc(50% - .4rem);
-    grid-template-columns: repeat(2, 1fr);
-    gap: .6rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-content: space-between;
 }
+@media (min-width: 501px) {
+    #vocabListEntries .vocabEntryRow {
+        gap: .5rem;
+    }
+}
 
-main li span {
-    display: block;
-    display: flex;
-    align-items: center;
+.vocabEntry {
+    box-sizing: border-box;
     position: relative;
-    white-space: pre-wrap;
+    border-bottom: var(--borderWidth) solid var(--textColor);
+    padding: calc(var(--padding) * .25) 0;
+    min-height: 1.5em;
     word-break: break-word;
+}
+@media (max-width: 500px) {
+    .vocabEntry {
+        font-size: .7em;
+    }
 }
 
 main span[contenteditable="true"] {
@@ -393,6 +422,7 @@ main span[contenteditable="true"]:focus {
     justify-content: center;
     border: var(--borderWidth) solid var(--textColor);
     padding: 0 1em;
+    height: 100%;
     border-radius: 100%;
 }
 

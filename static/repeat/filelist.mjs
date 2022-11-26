@@ -30,7 +30,7 @@ export default class FileList {
             const entry = this.#scope.querySelector(`li[data-filename="${from}"]`);
 
             entry.dataset.filename = to;
-            entry.querySelector("span").textContent = to;
+            entry.textContent = to;
         });
 
         dataStore.on("fileDeleted", ({ filename }) => {
@@ -43,10 +43,11 @@ export default class FileList {
         dataStore.on("newFileCreated", ({ filename }) => {
             const template = document.getElementById("T<fileListEntry>");
             const frag = template.content.cloneNode(true);
+            const li = frag.querySelector("li");
 
-            frag.querySelector("li").dataset.filename = filename;
-            frag.querySelector("span").textContent = filename;
-            frag.querySelector("li").setAttribute("id", "currentlyLoadedList");
+            li.dataset.filename = filename;
+            li.textContent = filename;
+            li.setAttribute("id", "currentlyLoadedList");
 
             this.#scope.append(frag);
         });
@@ -55,9 +56,10 @@ export default class FileList {
             for (const filename of filenames) {
                 const template = document.getElementById("T<fileListEntry>");
                 const frag = template.content.cloneNode(true);
+                const li = frag.querySelector("li");
 
-                frag.querySelector("li").dataset.filename = filename;
-                frag.querySelector("span").textContent = filename;
+                li.dataset.filename = filename;
+                li.textContent = filename;
 
                 this.#scope.append(frag);
             }
