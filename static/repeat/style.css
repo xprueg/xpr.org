@@ -11,8 +11,17 @@
     -webkit-font-smoothing: antialiased;
 }
 
+a {
+    display: contents;
+}
+
 :root {
-    --fontSize: clamp(2rem, 3vw, 2.6rem);
+    --fontSize: clamp(2rem, 2.8vw, 2.6rem);
+    --thin: 300;
+    --regular: 400;
+    --semi-bold: 600;
+    --bold: 700;
+    --black: 900;
 
     --backgroundColor: hsl(350, 70%, 98%);
     --textColor: hsl(360, 100%, 50%);
@@ -20,7 +29,6 @@
     --borderWidth: 2px;
     --lineHeight: 1.3rem;
     --padding: .8rem;
-    --buttonHeight: calc(var(--fontSize) * .7);
 }
 @media (max-width: 500px) {
     :root {
@@ -29,14 +37,15 @@
 }
 
 html {
+    font-family: "Inter Var", "Suisse Intl", fantasy;
+    font-weight: var(--regular);
     font-size: var(--fontSize);
     height: 100%;
+    caret-color : var(--textColor);
 }
 
 body {
     height: 100%;
-    font-family: "AkkuratLLWebPan-Regular";
-    font-feature-settings: "ss02";
     background: var(--backgroundColor);
     color: var(--textColor);
     display: grid;
@@ -46,10 +55,6 @@ body {
 @media (min-width: 501px) {
     body {
         grid-template-columns: 35vw 1fr;
-    }
-
-    [data-vocablist-mode="none"] body {
-        grid-template-columns: 100% 0;
     }
 }
 @media (max-width: 500px) {
@@ -121,6 +126,7 @@ header {
     overflow-x: auto;
     gap: .5rem;
     flex-shrink: 0;
+    --buttonHeight: calc(var(--fontSize) * .55);
 }
 @media (min-width: 500px) {
     header {
@@ -154,8 +160,8 @@ button {
     border: var(--borderWidth) solid var(--textColor);
     border-radius: 100vw;
     height: var(--buttonHeight);
-    padding: 0 2ex;
-    font-family: "AkkuratLLWebPan-Bold";
+    padding: 0 1.4ex;
+    font-weight: var(--semi-bold);
     font-size: .7rem;
     cursor: pointer;
     flex-shrink: 0;
@@ -212,6 +218,10 @@ input[type="checkbox"] {
 
 #fileList {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .4em;
 }
 @media (min-width: 501px) {
     #fileList {
@@ -220,49 +230,38 @@ input[type="checkbox"] {
 }
 @media (max-width: 500px) {
     #fileList {
-        display: flex;
-        flex-direction: column;
         justify-content: flex-end;
     }
 }
 
 #fileList li {
     cursor: pointer;
-    box-sizing: border-box;
     position: relative;
+    font-weight: var(--semi-bold);
     display: flex;
-    align-items: center;
-    border-bottom: var(--borderWidth) solid var(--textColor);
-    padding: calc(var(--padding) * .25) 0;
-    min-height: 1.5em;
-}
-
-#fileList li:first-child {
-    border-top: var(--borderWidth) solid var(--textColor);
+    flex-direction: column;
+    word-break: break-word;
 }
 
 #fileList li::after {
-    content: "";
+    content: attr(data-info);
+    font-size: .5em;
+    vertical-align: super;
 }
 
-#fileList li:hover::after,
-#fileList li#currentlyLoadedList::after {
-    content: "●";
+#fileList li:hover::before,
+#fileList li#currentlyLoadedList::before {
+    content: "";
+    top: -.3em;
+    bottom: -.3em;
+    left: -.2em;
+    right: -.2em;
     position: absolute;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "AkkuratLLWebPan-Bold";
-    background: var(--textColor);
-    color: var(--backgroundColor);
-    mix-blend-mode: exclusion;
-    width: 100%;
-    height: 100%;
-}
-
-#fileList li:not(#currentlyLoadedList):hover::after {
-    content: "○";
+    border: var(--borderWidth) solid var(--textColor);
 }
 
 .loading {
@@ -275,7 +274,6 @@ input[type="checkbox"] {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* --percentage: "50%"; */
 }
 
 .loading::before {
@@ -323,13 +321,32 @@ input[type="checkbox"] {
 }
 
 #vocabListHeader {
-    text-transform: uppercase;
-    font-family: "AkkuratLLWebPan-Bold";
     border: var(--borderWidth) solid var(--textColor);
     border-radius: 50%;
-    padding: calc(var(--padding) * .5) 0;
+    font-weight: var(--semi-bold);
+    padding: var(--padding) 0;
     text-align: center;
     word-break: break-word;
+}
+@media (min-width: 501px) {
+    #vocabListHeader {
+        font-size: 1.5em;
+    }
+}
+
+#vocabListHeader[contenteditable="true"]:empty::after {
+    font-weight: var(--thin);
+    content: "( TITLE )";
+    font-feature-settings: "case" 1;
+}
+
+#vocabListHeader[contenteditable="true"] {
+    border-bottom-style: dotted;
+}
+
+#vocabListHeader[contenteditable="true"]:focus {
+    outline: none;
+    border-bottom-style: dotted;
 }
 
 #vocabListEntries {
@@ -363,35 +380,21 @@ input[type="checkbox"] {
     }
 }
 
-main span[contenteditable="true"] {
-    caret-color : var(--textColor);
-    caret-shape: block;
+.vocabEntry[contenteditable="true"] {
     border-bottom-style: dotted;
-    border-bottom-width: var(--borderWidth);
 }
 
-main span[contenteditable="true"]:focus {
+.vocabEntry[contenteditable="true"]:focus {
     outline: none;
     border-bottom-style: dotted;
-    border-bottom-width: var(--borderWidth);
 }
 
 [data-marked-for-deletion] {
     display: none !important;
 }
 
-#vocabListHeader span[contenteditable="true"]:nth-child(1):empty::after {
-    content: "TITLE ➀";
-}
-#vocabListHeader span[contenteditable="true"]:nth-child(2):empty::after {
-    content: "TITLE ➁";
-}
-
-#vocabListEntries span[contenteditable="true"]:nth-child(1):empty::after {
-    content: "➀";
-}
-#vocabListEntries span[contenteditable="true"]:nth-child(2):empty::after {
-    content: "➁";
+#vocabListEntries span[contenteditable="true"]:empty::after {
+    content: "◊";
 }
 
 /* VocabTestController */
@@ -402,7 +405,7 @@ main span[contenteditable="true"]:focus {
 
 [data-test-row="active"],
 [data-test-row="incorrect"] {
-    font-family: "AkkuratLLWebPan-Bold";
+    font-weight: var(--bold);
 }
 
 [data-test-row="incorrect"] [contenteditable]::before {
@@ -413,7 +416,6 @@ main span[contenteditable="true"]:focus {
 [data-test-row="incorrect"] [contenteditable]::after {
     content: attr(data-user-value) !important;
     text-decoration: line-through;
-    font-family: "AkkuratLLWebPan-Regular";
 }
 
 .progress {
@@ -422,7 +424,6 @@ main span[contenteditable="true"]:focus {
     justify-content: center;
     border: var(--borderWidth) solid var(--textColor);
     padding: 0 1em;
-    height: 100%;
     border-radius: 100%;
 }
 

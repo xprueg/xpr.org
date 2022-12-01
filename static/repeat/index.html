@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Forced Repetition</title>
         <meta name="referrer" content="same-origin">
-        <link rel="stylesheet" href="/fonts/fonts.css">
+        <link rel="preconnect" href="https://rsms.me/">
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
         <link rel="stylesheet" href="./style.css">
         <script type="module">
             import * as State from "./state.mjs";
@@ -29,7 +30,7 @@
                     <fieldset data-user-show="onLoggedIn">
                         <button class="circular avatar"></button>
                         <a href="/oauth/github/logout/repeat">
-                            <button title="Logout">↱</button>
+                            <button class="circular" title="Logout">⏏</button>
                         </a>
                     </fieldset>
                 </fieldset>
@@ -38,7 +39,7 @@
             <div class="loading" data-filelist-show="onLoading"></div>
 
             <template id="T<fileListEntry>">
-                <li class="uppercase" data-filename></li>
+                <li data-filename data-info></li>
             </template>
             <ol id="fileList" data-filelist-show="onLoaded"></ol>
         </nav>
@@ -69,11 +70,7 @@
             </header>
 
             <div id="vocabList" data-vocablist-show="onList onEdit onTest">
-                <template id="T<vocabListHeader>">
-                    <span class="vocabHeaderEntry"
-                          data-can-contenteditable="true"></span>
-                </template>
-                <div id="vocabListHeader"></div>
+                <div id="vocabListHeader" data-can-contenteditable="true"></div>
 
                 <template id="T<vocabEntryRow>">
                     <li class="vocabEntryRow"></li>

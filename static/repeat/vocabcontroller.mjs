@@ -17,7 +17,7 @@ export default class VocabController {
     state;
 
     async save() {
-        const new_filename = document.querySelector(".vocabHeaderEntry").textContent;
+        const new_filename = document.getElementById("vocabListHeader").textContent;
         const new_content = Array.from(
             document.querySelectorAll(".vocabEntryRow"),
             node => Array.from(
@@ -41,9 +41,7 @@ export default class VocabController {
 
         this.dataStore.on("fileOpened", ({ filename }) => {
             if (filename === Filetype.NEW_FILE) {
-                const header_template = document.getElementById("T<vocabListHeader>");
-                const header_frag = header_template.content.cloneNode(true);
-                vocabListHeader.replaceChildren(header_frag);
+                vocabListHeader.replaceChildren();
 
                 const row_template = document.getElementById("T<vocabEntryRow>");
                 const row_frag = row_template.content.cloneNode(true);
@@ -147,10 +145,7 @@ export default class VocabController {
     }
 
     renderContent(filename, contents) {
-        const header_template = document.getElementById("T<vocabListHeader>");
-        const header = header_template.content.cloneNode(true);
-        header.querySelector(".vocabHeaderEntry").textContent = filename;
-
+        const header = filename;
         const entries = contents.map(row => {
             const template = document.getElementById("T<vocabEntryRow>");
             const entry_row = template.content.cloneNode(true);

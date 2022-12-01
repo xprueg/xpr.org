@@ -1,6 +1,7 @@
 export default class vocabEditController {
     #abortControllerForEventListener;
     #scope = {
+        container: vocabList,
         header: vocabListHeader,
         list: vocabListEntries,
     };
@@ -13,8 +14,7 @@ export default class vocabEditController {
     activate() {
         this.state.setState("vocablist", this.state.vocablist.EDIT);
 
-        this.makeCellsEditable(this.#scope.header);
-        this.makeCellsEditable(this.#scope.list);
+        this.makeCellsEditable(this.#scope.container);
 
         if (Array.from(this.#scope.list.querySelectorAll(".vocabEntryRow")).length === 0)
             this.spawnEmptyEditableRow();
@@ -50,7 +50,7 @@ export default class vocabEditController {
         this.#abortControllerForEventListener.abort();
 
         const restore_original_state = action === "CANCEL";
-        this.restoreEditableCells(this.#scope.header, restore_original_state);
+        this.restoreEditableCells(this.#scope.container, restore_original_state);
 
         for (const row of this.#scope.list.querySelectorAll("li")) {
             const is_untracked_row = "untrackedRow" in row.dataset;
