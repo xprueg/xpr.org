@@ -39,7 +39,9 @@
             <div class="loading" data-filelist-show="onLoading"></div>
 
             <template id="T<fileListEntry>">
-                <li data-filename data-info></li>
+                <li data-filename data-info>
+                    <span class="filename noPointerEvents"></span>
+                </li>
             </template>
             <ol id="fileList" data-filelist-show="onLoaded"></ol>
         </nav>

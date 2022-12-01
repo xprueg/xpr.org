@@ -57,12 +57,22 @@ export default class FileList {
                 const template = document.getElementById("T<fileListEntry>");
                 const frag = template.content.cloneNode(true);
                 const li = frag.querySelector("li");
-                const [name, info] = filename.split("+++").map(s => s.trim());
+                let [name, info] = filename.split("+++").map(s => s.trim());
 
+                let icon = String();
+                name = name.replace(/\[.+\]/, (a, b, c) => {
+                    icon = a.replace(/[\[\]]/g, String());
+                    return String();
+                });
+                name = name.trim();
+
+                const ff = li.querySelector(".filename");
                 if (info)
-                    li.dataset.info = info.replace(">", "→");
+                    ff.dataset.info = info.replace(">", "→");
+                if (icon)
+                    li.dataset.icon = icon;
                 li.dataset.filename = filename;
-                li.textContent = name;
+                ff.textContent = name;
 
                 this.#scope.append(frag);
             }

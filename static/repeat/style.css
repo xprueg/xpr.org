@@ -221,7 +221,7 @@ input[type="checkbox"] {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: .4em;
+    gap: .5em;
 }
 @media (min-width: 501px) {
     #fileList {
@@ -239,18 +239,29 @@ input[type="checkbox"] {
     position: relative;
     font-weight: var(--semi-bold);
     display: flex;
-    flex-direction: column;
     word-break: break-word;
+    gap: .3em;
 }
 
-#fileList li::after {
+#fileList .filename {
+    display: flex;
+    flex-direction: column;
+    gap: .1em;
+}
+
+#fileList .filename::after {
     content: attr(data-info);
     font-size: .5em;
     vertical-align: super;
 }
 
-#fileList li:hover::before,
-#fileList li#currentlyLoadedList::before {
+#fileList li::before {
+    content: attr(data-icon);
+    white-space: nowrap;
+}
+
+#fileList li:hover::after,
+#fileList li#currentlyLoadedList::after {
     content: "";
     top: -.3em;
     bottom: -.3em;
