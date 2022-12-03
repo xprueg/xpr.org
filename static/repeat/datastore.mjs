@@ -116,8 +116,6 @@ class GithubDataStore extends DataStore {
             [".xpr.org.repetition"]: { content: JSON.stringify(Array.from(index)) },
             [id]: { content: String() },
         });
-
-        console.info(gist);
     }
 
     async save({ new_filename, new_content }) {
@@ -171,57 +169,91 @@ class GithubDataStore extends DataStore {
 
 class LocalDataStore extends DataStore {
     #filenames = new Set();
+    index = null;
+    githubIndex = null;
 
-    get filenames() {
-        return Array.from(this.#filenames);
+    async getIndex() {
+        if (this.index === null || this.githubIndex === null) {
+            const index = JSON.parse(localStorage.getItem(".xpr.org.repetition")) ?? [];
+    //         const github_files
+    //
+    //         const { [".xpr.org.repetition"]: index, ...github_files } = files;
+
+            this.index = new Map(index);
+            this.githubIndex = new Map();//Object.entries(github_files));
+        }
+
+        return {
+            index: this.index,
+            githubIndex: this.githubIndex
+        };
     }
 
     async getFileListing() {
-        const filenames = localStorage.getItem("filenames");
-        if (filenames === null)
-            return this.filenames;
-
-        this.#filenames = new Set(JSON.parse(filenames));
-        return this.filenames;
+        const { index } = await this.getIndex();
+        return Array.from(index.keys());
     }
 
-    async getFileContents() {
-        const content = localStorage.getItem(filename);
-        if (content === null)
-            throw Error(`No contents found for ${filename}.`);
+    async getFileContentsForOpenFile() {
+        if (this.loaded_file === Filetype.NO_FILE)
+            throw Error("No open file");
 
-        return JSON.parse(content);
+        const { index, githubIndex } = await this.getIndex();
+        const { id } = index.get(this.loaded_file);
+
+        const content = JSON.parse(localStorage.getItem(id)) ?? Array();
+        return content;
     }
 
-    async deleteCurrentlyOpenFile(filename) {
-        this.#filenames.delete(filename);
-        localStorage.setItem("filenames", JSON.stringify(Array.from(this.#filenames)));
-        localStorage.removeItem(filename);
+    async deleteCurrentlyOpenFile() {
+        const filename = this.loaded_file;
+        const { index, githubIndex } = await this.getIndex();
+        const { id } = index.get(filename);
+
+        index.delete(filename);
 
         this.emit("fileDeleted", { filename });
+        this.loaded_file = Filetype.NO_FILE;
+
+        localStorage.setItem(".xpr.org.repetition", JSON.stringify(Array.from(index)));
+        localStorage.removeItem(id);
     }
 
-    async update(filename, { filename: new_filename, content }) {
-        if (filename !== null && filename !== new_filename) {
-            this.emit("filenameChanged", {
-                from: filename,
-                to: new_filename,
-            });
+    async save({ new_filename, new_content }) {
+        const filename = this.loaded_file;
+        const { index, githubIndex } = await this.getIndex();
 
-            this.#filenames.delete(filename);
-            this.#filenames.add(new_filename);
-            localStorage.removeItem(filename);
+        // New file
+        if (filename === Filetype.NEW_FILE) {
+            const ids = Array.from(index.values()).map(({ id }) => id);
+            let id = 0;
+            while (ids.includes(String(id))) ++id;
+            id = String(id);
+
+            this.loaded_file = new_filename;
+            this.emit("newFileCreated", { filename: new_filename });
+
+            index.set(new_filename, { id });
+
+            localStorage.setItem(id, JSON.stringify(new_content));
+            localStorage.setItem(".xpr.org.repetition", JSON.stringify(Array.from(index)));
+        } else {
+            const file = index.get(filename);
+            const { id } = file;
+
+            if (filename !== new_filename) {
+                index.delete(filename);
+                index.set(new_filename, file);
+
+                this.loaded_file = new_filename;
+                this.emit("filenameChanged", {
+                    from: filename,
+                    to: new_filename,
+                });
+            }
+
+            localStorage.setItem(id, JSON.stringify(new_content));
+            localStorage.setItem(".xpr.org.repetition", JSON.stringify(Array.from(index)));
         }
-
-        if (filename === null) {
-            this.#filenames.add(new_filename);
-
-            this.emit("newFileCreated", {
-                filename: new_filename,
-            });
-        }
-
-        localStorage.setItem(new_filename, JSON.stringify(content));
-        localStorage.setItem("filenames", JSON.stringify(Array.from(this.#filenames)));
     }
 }

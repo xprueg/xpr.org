@@ -21,16 +21,16 @@
         <nav id="fileListSection" class="column">
             <header>
                 <fieldset class="fullWidth buttonGroup">
-                    <button class="fullWidth" data-action="NEWFILE">New List</button>
+                    <button class="fullWidth" data-action="NEWFILE">New List®</button>
                     <div data-user-show="onLoggedOut">
                         <a href="/oauth/github/repeat">
-                            <button class="circular githubLogin">&#62472;</button>
+                            <button class="githubLogin">GitHub</button>
                         </a>
                     </div>
                     <fieldset data-user-show="onLoggedIn">
                         <button class="circular avatar"></button>
                         <a href="/oauth/github/logout/repeat">
-                            <button class="circular" title="Logout">⏏</button>
+                            <button title="Logout">⏏</button>
                         </a>
                     </fieldset>
                 </fieldset>
@@ -47,11 +47,11 @@
         </nav>
 
         <main id="vocabListSection" class="column" data-vocablist-show="onList onEdit onTest onLoading">
-            <div class="loading" data-vocablist-show="onLoading"><span>®</span></div>
+            <div class="loading" data-vocablist-show="onLoading"></div>
 
             <header class="spaceBetween">
                 <fieldset>
-                    <button data-vocablist-show="onTest onList onEdit" class="circular" data-action="CLOSE">←</button>
+                    <button data-vocablist-show="onTest onList onEdit" data-action="CLOSE">←</button>
                 </fieldset>
                 <fieldset>
                     <div class="progress" data-vocablist-show="onTest">/</div>
@@ -67,7 +67,9 @@
                     <button data-vocablist-show="onList" data-action="EDIT">Edit</button>
                     <button data-vocablist-show="onList" data-action="DELETE">Delete</button>
                     <button data-vocablist-show="onEdit" data-action="SAVE">Save</button>
-                    <button data-vocablist-show="onEdit onTest" data-action="CANCEL">Cancel</button>
+                    <button data-vocablist-show="onEdit" data-action="CANCEL">Cancel</button>
+                    <!-- FIXME Listen for the stop button -->
+                    <button data-vocablist-show="onTest" data-action="CANCEL">Stop</button>
                 </fieldset>
             </header>
 

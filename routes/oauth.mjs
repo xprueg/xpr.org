@@ -6,7 +6,7 @@ const router = express.Router();
 
 const epoch = new Date(0);
 const future = new Date("3456-02-01T00:00");
-
+// TODO Send new github api version header
 router.get("/github/:project", async (req, res) => {
     const state = crypto.randomBytes(16).toString("hex");
     const github_auth_url = new URL(`https://github.com/login/oauth/authorize?${
@@ -34,7 +34,7 @@ async function exchangeCodeForAccessToken(code) {
         },
     });
 
-    return `${res.token_type} ${res.access_token}`;
+    return `${res.body.token_type} ${res.body.access_token}`;
 }
 
 async function fetchGithubUser(access_token) {

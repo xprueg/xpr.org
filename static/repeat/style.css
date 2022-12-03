@@ -19,12 +19,16 @@ a {
     --fontSize: clamp(2rem, 2.8vw, 2.6rem);
     --thin: 300;
     --regular: 400;
+    --500: 500;
     --semi-bold: 600;
     --bold: 700;
     --black: 900;
 
     --backgroundColor: hsl(350, 70%, 98%);
     --textColor: hsl(360, 100%, 50%);
+
+    --backgroundColor: white;
+    --textColor: black;
 
     --borderWidth: 2px;
     --lineHeight: 1.3rem;
@@ -37,7 +41,7 @@ a {
 }
 
 html {
-    font-family: "Inter Var", "Suisse Intl", fantasy;
+    font-family: "Inter var experimental", "Inter varl", "Suisse Intl", fantasy;
     font-weight: var(--regular);
     font-size: var(--fontSize);
     height: 100%;
@@ -128,6 +132,12 @@ header {
     flex-shrink: 0;
     --buttonHeight: calc(var(--fontSize) * .55);
 }
+header:not(:hover) {
+    mix-blend-mode: exclusion;
+}
+header:hover {
+    filter: invert(1);
+}
 @media (min-width: 500px) {
     header {
         top: 0;
@@ -155,26 +165,28 @@ fieldset.buttonGroup {
 }
 
 button {
-    color: var(--textColor);
-    background: var(--backgroundColor);
-    border: var(--borderWidth) solid var(--textColor);
+    color: var(--backgroundColor);
+    background: var(--textColor);
+    /* background: transparent; */
+    border: var(--borderWidth) solid var(--backgroundColor);
     border-radius: 100vw;
     height: var(--buttonHeight);
     padding: 0 1.4ex;
-    font-weight: var(--semi-bold);
+    font-weight: var(--500);
     font-size: .7rem;
     cursor: pointer;
     flex-shrink: 0;
+    text-transform: uppercase;
 }
 
 button:hover, button.active, input[type="checkbox"]:checked + button {
-    background: var(--textColor);
-    color: var(--backgroundColor);
+    background: var(--backgroundColor);
+    color: var(--textColor);
 }
 
 button.githubLogin {
-    font-family: PragmataPro-Regular;
-    font-size: .8rem;
+    /* font-family: PragmataPro-Regular;
+    font-size: .8rem; */
 }
 
 button.circular {
@@ -221,7 +233,9 @@ input[type="checkbox"] {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: .5em;
+    font-weight: 400;
+    letter-spacing: -.05ex;
+    gap: 0.2ex;
 }
 @media (min-width: 501px) {
     #fileList {
@@ -237,42 +251,24 @@ input[type="checkbox"] {
 #fileList li {
     cursor: pointer;
     position: relative;
-    font-weight: var(--semi-bold);
     display: flex;
     word-break: break-word;
-    gap: .3em;
-}
-
-#fileList .filename {
-    display: flex;
-    flex-direction: column;
-    gap: .1em;
-}
-
-#fileList .filename::after {
-    content: attr(data-info);
-    font-size: .5em;
-    vertical-align: super;
+    gap: 0.2ex;
+    text-transform: uppercase;
+    font-variation-settings: "slnt" 0;
+    transition: all 250ms ease;
 }
 
 #fileList li::before {
-    content: attr(data-icon);
-    white-space: nowrap;
+    content: attr(data-score) "®";
+    white-space: pre;
+    font-feature-settings: "tnum" 1, "zero" 1;
 }
 
-#fileList li:hover::after,
-#fileList li#currentlyLoadedList::after {
-    content: "";
-    top: -.3em;
-    bottom: -.3em;
-    left: -.2em;
-    right: -.2em;
-    position: absolute;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: var(--borderWidth) solid var(--textColor);
+#fileList li:hover,
+li#currentlyLoadedList {
+    text-decoration: underline;
+    font-variation-settings: "slnt" -10;
 }
 
 .loading {
@@ -285,24 +281,30 @@ input[type="checkbox"] {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-feature-settings: "case" 1, "ss02" 1;
 }
 
 .loading::before {
-    animation: rotate 1200ms linear infinite;
+    animation: rotate 1300ms linear infinite, rotate2 1600ms linear infinite;
+}
+
+@keyframes rotate2 {
+    0% {
+        transform: rotate(0);
+    } 100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes rotate {
     0%, 100% {
-        content: var(--percentage, "\\");
+        content: var(--percentage, "†");
     }
-    25% {
-        content: var(--percentage, "Ⅰ");
+    33% {
+        content: var(--percentage, "‡");
     }
-    50% {
-        content: var(--percentage, "/");
-    }
-    75% {
-        content: var(--percentage, "—");
+    66% {
+        content: var(--percentage, "+");
     }
 }
 
@@ -334,7 +336,7 @@ input[type="checkbox"] {
 #vocabListHeader {
     border: var(--borderWidth) solid var(--textColor);
     border-radius: 50%;
-    font-weight: var(--semi-bold);
+    font-weight: var(--regular);
     padding: var(--padding) 0;
     text-align: center;
     word-break: break-word;

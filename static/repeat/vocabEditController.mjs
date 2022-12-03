@@ -1,41 +1,52 @@
 export default class vocabEditController {
-    #abortControllerForEventListener;
-    #scope = {
-        container: vocabList,
-        header: vocabListHeader,
-        list: vocabListEntries,
-    };
+    abortControllerForEventListener;
+    container_clone = null;
 
     constructor(baseController, state) {
         this.baseController = baseController;
         this.state = state;
     }
 
+    get container() {
+        return document.getElementById("vocabList");
+    }
+
+    get list() {
+        return document.getElementById("vocabListEntries");
+    }
+
+    get rows() {
+        return this.list.querySelectorAll(".vocabEntryRow");
+    }
+
     activate() {
         this.state.setState("vocablist", this.state.vocablist.EDIT);
 
-        this.makeCellsEditable(this.#scope.container);
+        this.container_clone = this.container.cloneNode(true);
 
-        if (Array.from(this.#scope.list.querySelectorAll(".vocabEntryRow")).length === 0)
+        this.makeCellsEditable(this.container);
+
+        if (this.rows.length === 0)
             this.spawnEmptyEditableRow();
 
-        const { signal } = this.#abortControllerForEventListener = new AbortController();
-        this.#scope.list.addEventListener("focus", evt => {
+        const { signal } = this.abortControllerForEventListener = new AbortController();
+
+        this.list.addEventListener("focus", evt => {
             const { target } = evt;
-// FIXME Ignore markedForDeletion rows!
+
             const is_vocab_entry = target.classList.contains("vocabEntry");
-            const is_last_row = target.matches("li:last-child span");
+            const is_last_row = target.matches("li:last-child :scope");
 
             if (is_vocab_entry && is_last_row)
                 this.spawnEmptyEditableRow();
         }, { capture: true, signal });
 
-        this.#scope.list.addEventListener("keydown", evt => {
+        this.list.addEventListener("keydown", evt => {
             const { shiftKey, key, target } = evt;
 
             if (shiftKey && key === "Backspace" && target.classList.contains("vocabEntry")) {
                 evt.preventDefault();
-                this.markRowForDeletion(target.closest(".vocabEntryRow"));
+                this.deleteRow(target.closest(".vocabEntryRow"));
             }
         }, { signal });
 
@@ -47,100 +58,45 @@ export default class vocabEditController {
     /// [>] action :: string CANCEL|SAVE
     /// [<] void
     deactivate(action) {
-        this.#abortControllerForEventListener.abort();
-
+        this.abortControllerForEventListener.abort();
         const restore_original_state = action === "CANCEL";
-        this.restoreEditableCells(this.#scope.container, restore_original_state);
 
-        for (const row of this.#scope.list.querySelectorAll("li")) {
-            const is_untracked_row = "untrackedRow" in row.dataset;
-
-            if (restore_original_state) {
-                this.restoreMarkedForDeletionRow(row);
-
-                if (is_untracked_row) {
-                    row.remove();
-                    continue;
-                }
-            } else {
-                for (const cell of row.querySelectorAll(".vocabEntry"))
-                    cell.textContent = cell.textContent.trim();
-
-                const empty_cells = row.querySelectorAll(".vocabEntry:empty");
-                const total_cells = row.querySelectorAll(".vocabEntry");
-                const row_is_empty = empty_cells.length === total_cells.length;
-                if (row_is_empty) {
-                    row.remove();
-                    continue;
-                }
-
-                this.removeMarkedForDeletionRow(row);
-
-                if (is_untracked_row)
-                    row.removeAttribute("data-untracked-row");
+        if (restore_original_state) {
+            this.container.replaceWith(this.container_clone);
+        } else {
+            for (const cell of this.container.querySelectorAll("[data-can-contenteditable]")) {
+                cell.removeAttribute("contenteditable");
+                cell.textContent = cell.textContent.trim();
             }
 
-            this.restoreEditableCells(row, restore_original_state);
-        }
-    }
+            for (const row of this.list.querySelectorAll(".vocabEntryRow")) {
+                const cells_with_content = Array
+                    .from(row.querySelectorAll(".vocabEntry"))
+                    .filter(cell => cell.matches(":not(:empty)"))
+                    .length;
 
-    markRowForDeletion(row) {
-        row.dataset.markedForDeletion = true;
-
-        let previous_sibling_row = row;
-        while (previous_sibling_row = previous_sibling_row.previousElementSibling) {
-            const is_marked_for_deletion = "markedForDeletion" in previous_sibling_row.dataset;
-
-            if (is_marked_for_deletion === false)
-                break;
+                if (cells_with_content === 0)
+                    row.remove();
+            }
         }
 
-        let next_sibling_row = row;
-        while (next_sibling_row = next_sibling_row.nextElementSibling) {
-            const is_marked_for_deletion = "markedForDeletion" in next_sibling_row.dataset;
-
-            if (is_marked_for_deletion === false)
-                break;
-        }
-
-        const sibling = previous_sibling_row ||
-                        next_sibling_row ||
-                        this.spawnEmptyEditableRow();
-
-        sibling.querySelector(".vocabEntry").focus();
+        this.container_clone = null;
     }
 
-    restoreMarkedForDeletionRow(row) {
-        if ("markedForDeletion" in row.dataset)
-            row.removeAttribute("data-marked-for-deletion");
-    }
+    deleteRow(row) {
+        const x = row.nextElementSibling || row.previousElementSibling;
 
-    removeMarkedForDeletionRow(row) {
-        if ("markedForDeletion" in row.dataset)
-            row.remove();
+        row.remove();
+
+        if (x)
+            x.querySelector(".vocabEntry").focus();
+        else
+            this.spawnEmptyEditableRow();
     }
 
     makeCellsEditable(scope) {
-        for (const cell of scope.querySelectorAll("[data-can-contenteditable]")) {
+        for (const cell of scope.querySelectorAll("[data-can-contenteditable]"))
             cell.setAttribute("contenteditable", true);
-            cell.dataset.backup = cell.textContent;
-        }
-    }
-
-    /// [>] scope :: HTMLElement
-    /// [>] restore_backup_data :: boolean
-    /// [<] void
-    restoreEditableCells(scope, restore_backup_data) {
-        for (const cell of scope.querySelectorAll("[data-can-contenteditable]")) {
-            cell.removeAttribute("contenteditable");
-
-            if (restore_backup_data)
-                cell.textContent = cell.dataset.backup;
-            else
-                cell.textContent = cell.textContent.trim();
-
-            cell.removeAttribute("data-backup");
-        }
     }
 
     spawnEmptyEditableRow() {
