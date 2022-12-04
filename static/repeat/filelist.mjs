@@ -21,20 +21,23 @@ export default class FileList {
         });
 
         dataStore.on("fileClosed", ({ filename }) => {
-            console.info("fileClosed", filename);
             this.#scope.querySelector("#currentlyLoadedList")?.removeAttribute("id");
         });
 
         dataStore.on("filenameChanged", ({ from, to }) => {
-            console.info("filenameChanged", from, to);
             const entry = this.#scope.querySelector(`li[data-filename="${from}"]`);
 
             entry.dataset.filename = to;
             entry.textContent = to;
         });
 
+        dataStore.on("fileScoreChanged", ({filename, from, to}) => {
+            const entry = this.#scope.querySelector(`li[data-filename="${filename}"]`);
+
+            entry.dataset.score = to;
+        });
+
         dataStore.on("fileDeleted", ({ filename }) => {
-            console.info(filename);
             const entry = this.#scope.querySelector(`li[data-filename="${filename}"]`);
 
             entry.remove();
@@ -46,19 +49,21 @@ export default class FileList {
             const li = frag.querySelector("li");
 
             li.dataset.filename = filename;
+            li.dataset.score = "00";
             li.textContent = filename;
             li.setAttribute("id", "currentlyLoadedList");
 
             this.#scope.append(frag);
         });
 
-        dataStore.getFileListing().then(filenames => {
-            for (const filename of filenames) {
+        dataStore.getFiles().then(files => {
+            for (const [filename, data] of files) {
+                const { id, score } = data;
                 const template = document.getElementById("T<fileListEntry>");
                 const frag = template.content.cloneNode(true);
                 const li = frag.querySelector("li");
 
-                li.dataset.score = String(Math.random()).substring(2,4);
+                li.dataset.score = score ?? "00";
                 li.dataset.filename = filename;
                 li.textContent = filename;
 

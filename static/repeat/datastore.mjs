@@ -80,9 +80,9 @@ class GithubDataStore extends DataStore {
         };
     }
 
-    async getFileListing() {
+    async getFiles() {
         const { index } = await this.getIndex();
-        return Array.from(index.keys());
+        return index;
     }
 
     async getFileContentsForOpenFile() {
@@ -116,7 +116,7 @@ class GithubDataStore extends DataStore {
         });
     }
 
-    async save({ new_filename, new_content }) {
+    async save({ new_filename, new_content, new_score }) {
         const filename = this.loaded_file;
         const { index, githubIndex } = await this.getIndex();
 
@@ -141,7 +141,7 @@ class GithubDataStore extends DataStore {
             githubIndex.set(id, gist.files[id]);
         } else {
             const file = index.get(filename);
-            const { id } = file;
+            const { id, score } = file;
 
             if (filename !== new_filename) {
                 index.delete(filename);
@@ -152,6 +152,17 @@ class GithubDataStore extends DataStore {
                     from: filename,
                     to: new_filename,
                 });
+            }
+
+            if (score !== new_score) {
+                file.score = new_score;
+                index.set(this.loaded_file, file);
+
+                this.emit("fileScoreChanged", {
+                    filename: this.loaded_file,
+                    from: score,
+                    to: new_score,
+                })
             }
 
             const gist = await post("/repeat/api/save", {

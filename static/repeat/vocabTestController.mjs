@@ -63,25 +63,20 @@ export default class vocabTestController {
         this.row_index = this.rows.length - 1;
     }
 
-    *getNthCellIndex() {
-        const indicesThatShouldBeTested = Array
-            .from(document.querySelectorAll(`[name="testRowWithIndex"]`))
-            .filter(i => i.checked);
+    getNthCell(cells) {
+        const columnThatShouldBeTested = Number(document
+            .querySelector(`[name="testColumnWithIndex"]:checked`)
+            .dataset.index);
 
-        while (true) {
-            const index = indicesThatShouldBeTested.length === 1
-                ? 0
-                : Math.floor(Math.random() * indicesThatShouldBeTested.length);
-
-            yield Number(indicesThatShouldBeTested[index].dataset.index);
-        }
+        if (columnThatShouldBeTested === -1)
+            return cells[Math.floor(Math.random() * cells.length)];
+        return cells[columnThatShouldBeTested];
     }
 
     makeOneCellPerRowEditable() {
-        const nth_cell = this.getNthCellIndex();
-
         for (const row of this.rows) {
-            const cell = row.querySelector(`.vocabEntry:nth-child(${nth_cell.next().value}`);
+            const cell = this.getNthCell(row.querySelectorAll(".vocabEntry"));
+
             cell.dataset.originalValue = cell.textContent;
             cell.setAttribute("contenteditable", true);
             cell.textContent = String();

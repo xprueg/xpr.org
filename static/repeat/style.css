@@ -30,7 +30,8 @@ a {
     --backgroundColor: white;
     --textColor: black;
 
-    --borderWidth: 2px;
+    --buttonBorderWidth: 1px;
+    --borderWidth: 1px;
     --lineHeight: 1.3rem;
     --padding: .8rem;
 }
@@ -175,13 +176,13 @@ fieldset.pill button:not(:first-of-type) {
 }
 
 fieldset.pill button {
-    margin-left: calc(-1 * var(--borderWidth));
+    margin-left: calc(-1 * var(--buttonBorderWidth));
 }
 
 button {
     color: var(--backgroundColor);
     background: var(--textColor);
-    border: var(--borderWidth) solid var(--backgroundColor);
+    border: var(--buttonBorderWidth) solid var(--backgroundColor);
     border-radius: 100vw;
     height: var(--buttonHeight);
     padding: 0 1.4ex;
@@ -428,7 +429,7 @@ li#currentlyLoadedList {
 }
 
 #vocabListEntries span[contenteditable="true"]:empty::after {
-    content: "◊";
+    content: "®";
 }
 
 /* VocabTestController */
@@ -437,9 +438,10 @@ li#currentlyLoadedList {
     display: none;
 }
 
-[data-test-row="active"],
-[data-test-row="incorrect"] {
-    font-weight: var(--bold);
+[data-test-row="active"] span,
+[data-test-row="incorrect"] span {
+    border-bottom-width: calc(2 * var(--borderWidth));
+    font-weight: 600;
 }
 
 [data-test-row="incorrect"] [contenteditable]::before {

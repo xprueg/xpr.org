@@ -56,19 +56,18 @@
                 </fieldset>
                 <fieldset class="buttonGroup">
                     <fieldset class="pill" data-vocablist-show="onList">
-                        <input type="radio" id="yoo" name="testRowWithIndex" data-index="1">
-                        <button class="circular noHoverState"><label for="yoo">←</label></button>
-                        <input type="radio" id="yaw" name="testRowWithIndex" data-index="2">
-                        <button class="noHoverState"><label for="yaw">↔</label></button>
-                        <input type="radio" id="last" name="testRowWithIndex" data-index="3" checked>
-                        <button class="circular noHoverState"><label for="last" class="circular">→</label></button>
+                        <input type="radio" id="left" name="testColumnWithIndex" data-index="0">
+                        <button class="circular noHoverState"><label for="left">←</label></button>
+                        <input type="radio" id="mixed" name="testColumnWithIndex" data-index="-1">
+                        <button class="noHoverState"><label for="mixed">↔</label></button>
+                        <input type="radio" id="right" name="testColumnWithIndex" data-index="1" checked>
+                        <button class="circular noHoverState"><label for="right" class="circular">→</label></button>
                         <button data-action="TEST">Test</button>
                     </fieldset>
                     <button data-vocablist-show="onList" data-action="EDIT">Edit</button>
                     <button data-vocablist-show="onList" data-action="DELETE">Delete</button>
                     <button data-vocablist-show="onEdit" data-action="SAVE">Save</button>
                     <button data-vocablist-show="onEdit" data-action="CANCEL">Cancel</button>
-                    <!-- FIXME Listen for the stop button -->
                     <button data-vocablist-show="onTest" data-action="CANCEL">Stop</button>
                 </fieldset>
             </header>

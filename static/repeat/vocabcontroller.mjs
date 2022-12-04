@@ -29,7 +29,19 @@ export default class VocabController {
             )
         );
 
-        this.dataStore.save({ new_filename, new_content });
+        const entries = Array.from(document.querySelectorAll(".vocabEntry"));
+        const entry_count = entries.length;
+        const tries = entries.reduce((count, entry) => count += +entry.dataset.tries, 0);
+        const mistakes = entries.reduce((count, entry) => {
+            if (entry.dataset.tries === "0")
+                count += 1;
+            else count += Number(entry.dataset.mistakes);
+
+            return count;
+        }, 0);
+        const new_score = (100 / tries * (tries - mistakes)).toFixed();
+
+        this.dataStore.save({ new_filename, new_content, new_score });
     }
 
     constructor(dataStore, state) {
@@ -85,8 +97,8 @@ export default class VocabController {
                     this.#activeController = this.#editController;
                 });
 
-        document.querySelector("[data-action='CANCEL']")
-                .addEventListener("click", _ => {
+        for (const button of document.querySelectorAll("[data-action='CANCEL']"))
+                button.addEventListener("click", _ => {
                     this.#activeController.deactivate("CANCEL");
                     this.#activeController = null;
 
