@@ -164,10 +164,23 @@ fieldset.buttonGroup {
     gap: .2rem;
 }
 
+fieldset.pill button:not(:last-of-type) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+fieldset.pill button:not(:first-of-type) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+fieldset.pill button {
+    margin-left: calc(-1 * var(--borderWidth));
+}
+
 button {
     color: var(--backgroundColor);
     background: var(--textColor);
-    /* background: transparent; */
     border: var(--borderWidth) solid var(--backgroundColor);
     border-radius: 100vw;
     height: var(--buttonHeight);
@@ -177,16 +190,12 @@ button {
     cursor: pointer;
     flex-shrink: 0;
     text-transform: uppercase;
+    position: relative;
 }
 
-button:hover, button.active, input[type="checkbox"]:checked + button {
+button:not(.noHoverState):hover, button.active, input[type="radio"]:checked + button {
     background: var(--backgroundColor);
     color: var(--textColor);
-}
-
-button.githubLogin {
-    /* font-family: PragmataPro-Regular;
-    font-size: .8rem; */
 }
 
 button.circular {
@@ -194,7 +203,19 @@ button.circular {
     padding: 0;
 }
 
-input[type="checkbox"] {
+button label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+ input[type="radio"] {
     display: none;
 }
 

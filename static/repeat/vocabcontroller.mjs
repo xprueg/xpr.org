@@ -62,12 +62,11 @@ export default class VocabController {
         });
 
         this.dataStore.on("fileClosed", ({ filename }) => {
-            if (this.#activeController === this.#editController) {
+            if (this.#activeController !== null) {
                 this.#activeController.deactivate("CANCEL");
                 this.#activeController = null;
-            } else if (this.#activeController === null) {
-                this.clearContent();
-            }
+            } else this.clearContent();
+
             this.state.setState("vocablist", this.state.vocablist.HIDDEN);
         });
 

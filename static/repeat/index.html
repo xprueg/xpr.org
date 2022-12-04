@@ -47,21 +47,21 @@
         </nav>
 
         <main id="vocabListSection" class="column" data-vocablist-show="onList onEdit onTest onLoading">
-            <div class="loading" data-vocablist-show="onLoading"></div>
-
             <header class="spaceBetween">
                 <fieldset>
-                    <button data-vocablist-show="onTest onList onEdit" data-action="CLOSE">←</button>
+                    <button data-vocablist-show="onLoading onTest onList onEdit" data-action="CLOSE">↩</button>
                 </fieldset>
                 <fieldset>
                     <div class="progress" data-vocablist-show="onTest">/</div>
                 </fieldset>
                 <fieldset class="buttonGroup">
-                    <fieldset data-vocablist-show="onList">
-                        <input type="checkbox" name="testRowWithIndex" data-index="1">
-                        <button onclick="this.previousElementSibling.click()" class="circular">1</button>
-                        <input type="checkbox" name="testRowWithIndex" data-index="2" checked>
-                        <button onclick="this.previousElementSibling.click()" class="circular">2</button>
+                    <fieldset class="pill" data-vocablist-show="onList">
+                        <input type="radio" id="yoo" name="testRowWithIndex" data-index="1">
+                        <button class="circular noHoverState"><label for="yoo">←</label></button>
+                        <input type="radio" id="yaw" name="testRowWithIndex" data-index="2">
+                        <button class="noHoverState"><label for="yaw">↔</label></button>
+                        <input type="radio" id="last" name="testRowWithIndex" data-index="3" checked>
+                        <button class="circular noHoverState"><label for="last" class="circular">→</label></button>
                         <button data-action="TEST">Test</button>
                     </fieldset>
                     <button data-vocablist-show="onList" data-action="EDIT">Edit</button>
@@ -72,6 +72,8 @@
                     <button data-vocablist-show="onTest" data-action="CANCEL">Stop</button>
                 </fieldset>
             </header>
+
+            <div class="loading" data-vocablist-show="onLoading"></div>
 
             <div id="vocabList" data-vocablist-show="onList onEdit onTest">
                 <div id="vocabListHeader" data-can-contenteditable="true"></div>

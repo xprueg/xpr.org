@@ -1,5 +1,5 @@
 export default class vocabTestController {
-    #abortControllerForEventListener;
+    abortControllerForEventListener;
     scope = {
         header: vocabListHeader,
         list: vocabListEntries,
@@ -15,7 +15,7 @@ export default class vocabTestController {
     activate() {
         this.state.setState("vocablist", this.state.vocablist.TEST);
 
-        const { signal } = this.#abortControllerForEventListener = new AbortController();
+        const { signal } = this.abortControllerForEventListener = new AbortController();
         this.addListener(signal);
 
         this.rows = Array.from(this.scope.list.querySelectorAll(".vocabEntryRow"));
@@ -137,7 +137,7 @@ export default class vocabTestController {
     /// [>] action :: string CANCEL|SAVE
     /// [<] void
     deactivate(action) {
-        this.#abortControllerForEventListener.abort();
+        this.abortControllerForEventListener.abort();
         this.resetRows();
         document.querySelector("*:focus")?.blur();
     }

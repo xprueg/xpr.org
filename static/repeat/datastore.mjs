@@ -27,7 +27,6 @@ class DataStore {
     listener = new Map();
 
     openFile(filename) {
-        console.info(filename);
         if (this.loaded_file === filename)
             return;
 
@@ -51,7 +50,6 @@ class DataStore {
     }
 
     emit(type, payload) {
-        console.info(type, payload);
         for(const callback of this.listener.get(type).values())
             callback(payload);
     }
