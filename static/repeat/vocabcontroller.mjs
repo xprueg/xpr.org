@@ -33,14 +33,16 @@ export default class VocabController {
         const entry_count = entries.length;
         const tries = entries.reduce((count, entry) => count += +entry.dataset.tries, 0);
         const mistakes = entries.reduce((count, entry) => {
-            if (entry.dataset.tries === "0")
+            if (entry.dataset.tries === 0)
                 count += 1;
             else count += Number(entry.dataset.mistakes);
 
             return count;
         }, 0);
-        const new_score = (100 / tries * (tries - mistakes)).toFixed();
 
+        const new_score = tries === 0
+            ? 0
+            : (100 / tries * (tries - mistakes)).toFixed();
         this.dataStore.save({ new_filename, new_content, new_score });
     }
 

@@ -43,13 +43,13 @@ export default class FileList {
             entry.remove();
         });
 
-        dataStore.on("newFileCreated", ({ filename }) => {
+        dataStore.on("newFileCreated", ({ filename, score }) => {
             const template = document.getElementById("T<fileListEntry>");
             const frag = template.content.cloneNode(true);
             const li = frag.querySelector("li");
 
             li.dataset.filename = filename;
-            li.dataset.score = "00";
+            li.dataset.score = score;
             li.textContent = filename;
             li.setAttribute("id", "currentlyLoadedList");
 
@@ -63,7 +63,7 @@ export default class FileList {
                 const frag = template.content.cloneNode(true);
                 const li = frag.querySelector("li");
 
-                li.dataset.score = score ?? "00";
+                li.dataset.score = score;
                 li.dataset.filename = filename;
                 li.textContent = filename;
 

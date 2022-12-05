@@ -50,7 +50,7 @@ export default class vocabEditController {
             }
         }, { signal });
 
-        document.querySelector("[contenteditable]").focus();
+        setTimeout( _ => document.querySelector("[contenteditable]").focus());
     }
 
     ///

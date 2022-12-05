@@ -79,7 +79,7 @@ export default class vocabTestController {
 
             cell.dataset.originalValue = cell.textContent;
             cell.setAttribute("contenteditable", true);
-            cell.textContent = String();
+            cell.textContent = String(" ");
         }
     }
 

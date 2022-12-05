@@ -76,7 +76,7 @@ class GithubDataStore extends DataStore {
 
         return {
             index: this.index,
-            githubIndex: this.githubIndex
+            githubIndex: this.githubIndex,
         };
     }
 
@@ -120,7 +120,6 @@ class GithubDataStore extends DataStore {
         const filename = this.loaded_file;
         const { index, githubIndex } = await this.getIndex();
 
-        // New file
         if (filename === Filetype.NEW_FILE) {
             const ids = Array.from(githubIndex.keys()).sort();
             let id = 0;
@@ -128,9 +127,9 @@ class GithubDataStore extends DataStore {
             id = String(id);
 
             this.loaded_file = new_filename;
-            this.emit("newFileCreated", { filename: new_filename });
+            this.emit("newFileCreated", { filename: new_filename, score: new_score });
 
-            index.set(new_filename, { id });
+            index.set(new_filename, { id, new_score });
             githubIndex.set(id, undefined);
 
             const gist = await post("/repeat/api/save", {
@@ -162,7 +161,7 @@ class GithubDataStore extends DataStore {
                     filename: this.loaded_file,
                     from: score,
                     to: new_score,
-                })
+                });
             }
 
             const gist = await post("/repeat/api/save", {
@@ -179,35 +178,26 @@ class GithubDataStore extends DataStore {
 class LocalDataStore extends DataStore {
     #filenames = new Set();
     index = null;
-    githubIndex = null;
 
     async getIndex() {
-        if (this.index === null || this.githubIndex === null) {
+        if (this.index === null) {
             const index = JSON.parse(localStorage.getItem(".xpr.org.repetition")) ?? [];
-    //         const github_files
-    //
-    //         const { [".xpr.org.repetition"]: index, ...github_files } = files;
-
             this.index = new Map(index);
-            this.githubIndex = new Map();//Object.entries(github_files));
         }
 
-        return {
-            index: this.index,
-            githubIndex: this.githubIndex
-        };
+        return { index: this.index };
     }
 
-    async getFileListing() {
+    async getFiles() {
         const { index } = await this.getIndex();
-        return Array.from(index.keys());
+        return index;
     }
 
     async getFileContentsForOpenFile() {
         if (this.loaded_file === Filetype.NO_FILE)
             throw Error("No open file");
 
-        const { index, githubIndex } = await this.getIndex();
+        const { index } = await this.getIndex();
         const { id } = index.get(this.loaded_file);
 
         const content = JSON.parse(localStorage.getItem(id)) ?? Array();
@@ -216,7 +206,7 @@ class LocalDataStore extends DataStore {
 
     async deleteCurrentlyOpenFile() {
         const filename = this.loaded_file;
-        const { index, githubIndex } = await this.getIndex();
+        const { index } = await this.getIndex();
         const { id } = index.get(filename);
 
         index.delete(filename);
@@ -228,11 +218,10 @@ class LocalDataStore extends DataStore {
         localStorage.removeItem(id);
     }
 
-    async save({ new_filename, new_content }) {
+    async save({ new_filename, new_content, new_score }) {
         const filename = this.loaded_file;
-        const { index, githubIndex } = await this.getIndex();
+        const { index } = await this.getIndex();
 
-        // New file
         if (filename === Filetype.NEW_FILE) {
             const ids = Array.from(index.values()).map(({ id }) => id);
             let id = 0;
@@ -240,15 +229,15 @@ class LocalDataStore extends DataStore {
             id = String(id);
 
             this.loaded_file = new_filename;
-            this.emit("newFileCreated", { filename: new_filename });
+            this.emit("newFileCreated", { filename: new_filename, score: new_score });
 
-            index.set(new_filename, { id });
+            index.set(new_filename, { id, new_score });
 
             localStorage.setItem(id, JSON.stringify(new_content));
             localStorage.setItem(".xpr.org.repetition", JSON.stringify(Array.from(index)));
         } else {
             const file = index.get(filename);
-            const { id } = file;
+            const { id, score } = file;
 
             if (filename !== new_filename) {
                 index.delete(filename);
@@ -258,6 +247,17 @@ class LocalDataStore extends DataStore {
                 this.emit("filenameChanged", {
                     from: filename,
                     to: new_filename,
+                });
+            }
+
+            if (score !== new_score) {
+                file.score = new_score;
+                index.set(this.loaded_file, file);
+
+                this.emit("fileScoreChanged", {
+                    filename: this.loaded_file,
+                    from: score,
+                    to: new_score,
                 });
             }
 
