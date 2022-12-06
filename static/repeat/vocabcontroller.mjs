@@ -95,6 +95,7 @@ export default class VocabController {
 
         document.querySelector("[data-action='EDIT']")
                 .addEventListener("click", _ => {
+                    iosFocusFix.focus();
                     this.#editController.activate();
                     this.#activeController = this.#editController;
                 });
@@ -127,10 +128,14 @@ export default class VocabController {
                 });
 
         document.querySelector("[data-action='NEWFILE']")
-                .addEventListener("click", _ => this.dataStore.openFile(Filetype.NEW_FILE));
+                .addEventListener("click", _ => {
+                    iosFocusFix.focus();
+                    this.dataStore.openFile(Filetype.NEW_FILE);
+                });
 
         document.querySelector(`[data-action="TEST"]`)
                 .addEventListener("click", _ => {
+                    iosFocusFix.focus();
                     this.#testController.activate();
                     this.#activeController = this.#testController;
                 });

@@ -1,9 +1,5 @@
 export default class vocabTestController {
     abortControllerForEventListener;
-    scope = {
-        header: vocabListHeader,
-        list: vocabListEntries,
-    };
     rows = null;
     row_index = null;
 
@@ -12,13 +8,17 @@ export default class vocabTestController {
         this.state = state;
     }
 
+    get list() {
+        return document.getElementById("vocabListEntries");
+    }
+
     activate() {
         this.state.setState("vocablist", this.state.vocablist.TEST);
 
         const { signal } = this.abortControllerForEventListener = new AbortController();
         this.addListener(signal);
 
-        this.rows = Array.from(this.scope.list.querySelectorAll(".vocabEntryRow"));
+        this.rows = Array.from(this.list.querySelectorAll(".vocabEntryRow"));
         document.querySelector(".progress").dataset.dnom = this.rows.length;
         document.querySelector(".progress").dataset.numr = 1;
 
@@ -28,7 +28,7 @@ export default class vocabTestController {
     }
 
     addListener(signal) {
-        this.scope.list.addEventListener("keydown", evt => {
+        this.list.addEventListener("keydown", evt => {
             const { shiftKey, key, target } = evt;
 
             if (!target.classList.contains("vocabEntry") || key !== "Enter")

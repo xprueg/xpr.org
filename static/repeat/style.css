@@ -11,6 +11,12 @@
     -webkit-font-smoothing: antialiased;
 }
 
+input#iosFocusFix {
+    position: fixed;
+    opacity: 0;
+    pointer-events: none;
+}
+
 a {
     display: contents;
 }
@@ -193,6 +199,7 @@ button {
     text-transform: uppercase;
     position: relative;
     cursor: cell;
+    font-feature-settings: "case" 1;
 }
 
 button:not(.noHoverState):hover, button.active, input[type="radio"]:checked + button {

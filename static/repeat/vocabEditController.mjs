@@ -25,9 +25,7 @@ export default class vocabEditController {
         this.container_clone = this.container.cloneNode(true);
 
         this.makeCellsEditable(this.container);
-
-        if (this.rows.length === 0)
-            this.spawnEmptyEditableRow();
+        this.spawnEmptyEditableRow();
 
         const { signal } = this.abortControllerForEventListener = new AbortController();
 
@@ -42,9 +40,9 @@ export default class vocabEditController {
         }, { capture: true, signal });
 
         this.list.addEventListener("keydown", evt => {
-            const { shiftKey, key, target } = evt;
+            const { ctrlKey, key, target } = evt;
 
-            if (shiftKey && key === "Backspace" && target.classList.contains("vocabEntry")) {
+            if (ctrlKey && key === "Backspace" && target.classList.contains("vocabEntry")) {
                 evt.preventDefault();
                 this.deleteRow(target.closest(".vocabEntryRow"));
             }
