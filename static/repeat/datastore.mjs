@@ -129,7 +129,7 @@ class GithubDataStore extends DataStore {
             this.loaded_file = new_filename;
             this.emit("newFileCreated", { filename: new_filename, score: new_score });
 
-            index.set(new_filename, { id, new_score });
+            index.set(new_filename, { id, score: new_score });
             githubIndex.set(id, undefined);
 
             const gist = await post("/repeat/api/save", {
@@ -231,7 +231,7 @@ class LocalDataStore extends DataStore {
             this.loaded_file = new_filename;
             this.emit("newFileCreated", { filename: new_filename, score: new_score });
 
-            index.set(new_filename, { id, new_score });
+            index.set(new_filename, { id, score: new_score });
 
             localStorage.setItem(id, JSON.stringify(new_content));
             localStorage.setItem(".xpr.org.repetition", JSON.stringify(Array.from(index)));

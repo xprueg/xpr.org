@@ -66,8 +66,6 @@ router.get("/api/get_gist", fetchAccessToken, async (req, res) => {
         gist_id = await getGistId(req.access_token);
         if (!gist_id)
             return res.status(500).json("NO_GIST_FOUND").end();
-
-        res.cookie("gist_id", gist_id, { expires: future, secure: true, httpOnly: true });
     }
 
     return new Promise((resolve, reject) => {

@@ -12,6 +12,7 @@ export default class User {
 
             state.setState("user", state.user.LOGGED_IN);
             document.querySelector(".avatar").style.backgroundImage = `url(${this.avatar})`;
+            document.querySelector(".avatar").title = this.login;
         }
     }
 
