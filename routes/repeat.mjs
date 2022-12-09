@@ -1,7 +1,6 @@
 import https from "https";
 import express from "express";
 import body_parser from "body-parser";
-import User from "../user.mjs";
 import { GET, POST } from "../fetch.mjs";
 
 const router = express.Router();
