@@ -6,7 +6,7 @@ const router = express.Router();
 
 const epoch = new Date(0);
 const future = new Date("3456-02-01T00:00");
-// TODO Send new github api version header
+
 router.get("/github/:project", async (req, res) => {
     const state = crypto.randomBytes(16).toString("hex");
     const github_auth_url = new URL(`https://github.com/login/oauth/authorize?${
@@ -25,6 +25,7 @@ router.get("/github/:project", async (req, res) => {
 async function exchangeCodeForAccessToken(code) {
     const res = await POST("github.com/login/oauth/access_token", {
         headers: {
+            "X-Github-Api-Version": process.env.GITHUB_API_VERSION,
             Accept: "application/vnd.github+json",
         },
         body: {
@@ -40,6 +41,7 @@ async function exchangeCodeForAccessToken(code) {
 async function fetchGithubUser(access_token) {
     const github_user = await GET("api.github.com/user", {
         headers: {
+            "X-Github-Api-Version": process.env.GITHUB_API_VERSION,
             "User-Agent": "xprueg",
             Accept: "application/vnd.github+json",
             Authorization: access_token,

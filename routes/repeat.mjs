@@ -10,6 +10,7 @@ const future = new Date("3456-02-01T00:00");
 
 function getHeaders(access_token) {
     return {
+        "X-GitHub-Api-Version": process.env.GITHUB_API_VERSION, // also in js
         "User-Agent": "xprueg",
         Accept: "application/vnd.github+json",
         Authorization: access_token,

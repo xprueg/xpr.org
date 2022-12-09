@@ -10,17 +10,22 @@ const app = express();
 
 app.set("trust proxy", 1);
 app.use(enforce.HTTPS({ trustProtoHeader: true }));
-app.use(helmet(), helmet.contentSecurityPolicy({
-    directives: {
-        defaultSrc: ["'none'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        connectSrc: ["'self'", "https://rsms.me", "https://gist.githubusercontent.com", "https://gist.github.com", "https://api.github.com"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://rsms.me"],
-        imgSrc: ["'self'", "https://avatars.githubusercontent.com"],
-        fontSrc: ["'self'", "https://rsms.me"],
-        baseUri: ["'self'"],
-    },
-}));
+
+app.use(
+    helmet(),
+    helmet.crossOriginEmbedderPolicy({ policy: "credentialless" }),
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: ["'none'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            connectSrc: ["'self'", "https://rsms.me", "https://gist.githubusercontent.com", "https://gist.github.com", "https://api.github.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://rsms.me"],
+            imgSrc: ["'self'", "https://avatars.githubusercontent.com"],
+            fontSrc: ["'self'", "https://rsms.me"],
+            baseUri: ["'self'"],
+        },
+    }),
+);
 
 app.use("/", express.static("static"));
 app.use(["/fonts"],
