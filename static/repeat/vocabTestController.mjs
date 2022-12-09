@@ -19,8 +19,9 @@ export default class vocabTestController {
         this.addListener(signal);
 
         this.rows = Array.from(this.list.querySelectorAll(".vocabEntryRow"));
-        document.querySelector(".progress").dataset.dnom = this.rows.length;
-        document.querySelector(".progress").dataset.numr = 1;
+
+        document.getElementById("vocabListHeader").style.setProperty("--progress", 0);
+        document.getElementById("vocabListHeader").style.setProperty("--progress-enabled", 1);
 
         this.shuffleRows();
         this.makeOneCellPerRowEditable();
@@ -88,13 +89,14 @@ export default class vocabTestController {
             const row = this.rows[i];
             const cell = row.querySelector("[contenteditable]");
 
+            document.getElementById("vocabListHeader").style.removeProperty("--progress");
+
             row.removeAttribute("data-test-row");
             cell.removeAttribute("data-user-value");
             cell.textContent = String();
         }
 
         this.row_index = this.rows.length - 1;
-        document.querySelector(".progress").dataset.numr = 1;
         this.activateCurrentRow();
     }
 
@@ -110,7 +112,9 @@ export default class vocabTestController {
 
         const cell = current_row.querySelector(".vocabEntry[contenteditable]");
         cell.dataset.tries = Number(cell.dataset.tries) + 1;
-        document.querySelector(".progress").dataset.numr = Number(document.querySelector(".progress").dataset.numr) + 1;
+
+        const progress = 100 / this.rows.length * (this.rows.length - this.row_index);
+        document.getElementById("vocabListHeader").style.setProperty("--progress", progress);
     }
 
     markCurrentRowAsIncorrect() {
@@ -133,6 +137,7 @@ export default class vocabTestController {
     /// [<] void
     deactivate(action) {
         this.abortControllerForEventListener.abort();
+        document.getElementById("vocabListHeader").style.setProperty("--progress-enabled", 0);
         this.resetRows();
         document.querySelector("*:focus")?.blur();
     }

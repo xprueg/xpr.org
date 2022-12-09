@@ -377,10 +377,23 @@ li#currentlyLoadedList {
     align-items: center;
     font-weight: 600;
 }
+#vocabListHeader::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    height: calc(5px * var(--progress-enabled));
+    width: calc(1% * var(--progress, 0));
+    background: var(--textColor);
+    transition: width 250ms ease-out, height 250ms 250ms ease-out;
+}
 @media (min-width: 501px) {
     #vocabListHeader {
         border-bottom: var(--borderWidth) solid var(--textColor);
         font-size: 1.2em;
+    }
+
+    #vocabListHeader::after {
+        bottom: 0;
     }
 }
 @media (max-width: 500px) {
@@ -391,6 +404,10 @@ li#currentlyLoadedList {
         filter: invert(1);
         border-bottom-width: 1px;
         z-index: 9;
+    }
+
+    #vocabListHeader::after {
+        top: 0;
     }
 }
 
