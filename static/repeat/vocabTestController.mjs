@@ -12,13 +12,24 @@ export default class vocabTestController {
         return document.getElementById("vocabListEntries");
     }
 
+    get entries() {
+        return Array.from(this.list.querySelectorAll(".vocabEntryRow"));
+    }
+
+    get testCount() {
+        const count = Number(document.querySelector(".testCount").textContent.trim());
+        if (count)
+            return count;
+        return this.entries.length;
+    }
+
     activate() {
         this.state.setState("vocablist", this.state.vocablist.TEST);
 
         const { signal } = this.abortControllerForEventListener = new AbortController();
         this.addListener(signal);
 
-        this.rows = Array.from(this.list.querySelectorAll(".vocabEntryRow"));
+        this.rows = this.entries.slice(0, this.testCount);
 
         document.getElementById("vocabListHeader").style.setProperty("--progress", 0);
         document.getElementById("vocabListHeader").style.setProperty("--progress-enabled", 1);
@@ -42,7 +53,7 @@ export default class vocabTestController {
             if (target.textContent.trim().toLowerCase() === target.dataset.originalValue.toLowerCase()) {
                 this.markCurrentRowAsCorrect();
 
-                if (this.row_index === 0)
+                if (this.row_index === this.testCount - 1)
                     return this.baseController.requestDeactivation("COMPLETE", true);
 
                 this.selectNextRow();
@@ -61,7 +72,7 @@ export default class vocabTestController {
             row.dataset.order = i;
         }
 
-        this.row_index = this.rows.length - 1;
+        this.row_index = 0;
     }
 
     getNthCell(cells) {
@@ -85,7 +96,7 @@ export default class vocabTestController {
     }
 
     rollback() {
-        for (let i = this.row_index; i < this.rows.length; ++i) {
+        for (let i = this.row_index; i > 0; --i) {
             const row = this.rows[i];
             const cell = row.querySelector("[contenteditable]");
 
@@ -96,7 +107,7 @@ export default class vocabTestController {
             cell.textContent = String();
         }
 
-        this.row_index = this.rows.length - 1;
+        this.row_index = 0;
         this.activateCurrentRow();
     }
 
@@ -113,7 +124,7 @@ export default class vocabTestController {
         const cell = current_row.querySelector(".vocabEntry[contenteditable]");
         cell.dataset.tries = Number(cell.dataset.tries) + 1;
 
-        const progress = 100 / this.rows.length * (this.rows.length - this.row_index);
+        const progress = 100 / this.rows.length * (this.row_index + 1);
         document.getElementById("vocabListHeader").style.setProperty("--progress", progress);
     }
 
@@ -129,7 +140,7 @@ export default class vocabTestController {
     }
 
     selectNextRow() {
-        --this.row_index;
+        ++this.row_index;
     }
 
     /// [*] Restore deleted rows on CANCEL
