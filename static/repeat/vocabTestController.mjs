@@ -2,10 +2,34 @@ export default class vocabTestController {
     abortControllerForEventListener;
     rows = null;
     row_index = null;
+    default_test_count = 8;
+    test_count = this.default_test_count;
+    default_test_col = "right";
+    test_col = this.default_test_col;
 
     constructor(baseController, state) {
         this.baseController = baseController;
         this.state = state;
+
+        const states = {
+            left: "←",
+            mixed: "↔",
+            right: "→",
+        };
+        document.querySelector(".testColumn").textContent = states[this.default_test_col];
+        document.querySelector("#testColumnSelection").addEventListener("change", evt => {
+            const opt = evt.target.selectedOptions[0];
+            document.querySelector(".testColumn").textContent = states[opt.value];
+            this.test_col = opt.value;
+        });
+
+        document.querySelector(".testCount").textContent = this.default_test_count;
+        document.querySelector(".testCount").addEventListener("click", evt => {
+            let new_count = Math.floor(Number(prompt("How many items shall be tested?")));
+            if (isNaN(new_count) || new_count === 0)
+                new_count = this.default_test_count;
+            this.test_count = evt.currentTarget.textContent = new_count;
+        });
     }
 
     get list() {
@@ -17,10 +41,7 @@ export default class vocabTestController {
     }
 
     get testCount() {
-        const count = Number(document.querySelector(".testCount").textContent.trim());
-        if (count)
-            return count;
-        return this.entries.length;
+        return Math.min(this.entries.length, this.test_count);
     }
 
     activate() {
@@ -37,6 +58,16 @@ export default class vocabTestController {
         this.shuffleRows();
         this.makeOneCellPerRowEditable();
         this.activateCurrentRow();
+    }
+
+    /// [*] Restore deleted rows on CANCEL
+    /// [>] action :: string CANCEL|SAVE
+    /// [<] void
+    deactivate(action) {
+        this.abortControllerForEventListener.abort();
+        document.getElementById("vocabListHeader").style.setProperty("--progress-enabled", 0);
+        this.resetRows();
+        document.querySelector("*:focus")?.blur();
     }
 
     addListener(signal) {
@@ -76,13 +107,11 @@ export default class vocabTestController {
     }
 
     getNthCell(cells) {
-        const columnThatShouldBeTested = Number(document
-            .querySelector(`[name="testColumnWithIndex"]:checked`)
-            .dataset.index);
+        const columnThatShouldBeTested = this.test_col;
 
-        if (columnThatShouldBeTested === -1)
+        if (columnThatShouldBeTested === "mixed")
             return cells[Math.floor(Math.random() * cells.length)];
-        return cells[columnThatShouldBeTested];
+        return cells[columnThatShouldBeTested === "left" ? 0 : 1];
     }
 
     makeOneCellPerRowEditable() {
@@ -100,12 +129,12 @@ export default class vocabTestController {
             const row = this.rows[i];
             const cell = row.querySelector("[contenteditable]");
 
-            document.getElementById("vocabListHeader").style.removeProperty("--progress");
-
             row.removeAttribute("data-test-row");
             cell.removeAttribute("data-user-value");
-            cell.textContent = String();
+            cell.textContent = String(" ");
         }
+
+        document.getElementById("vocabListHeader").style.removeProperty("--progress");
 
         this.row_index = 0;
         this.activateCurrentRow();
@@ -141,16 +170,6 @@ export default class vocabTestController {
 
     selectNextRow() {
         ++this.row_index;
-    }
-
-    /// [*] Restore deleted rows on CANCEL
-    /// [>] action :: string CANCEL|SAVE
-    /// [<] void
-    deactivate(action) {
-        this.abortControllerForEventListener.abort();
-        document.getElementById("vocabListHeader").style.setProperty("--progress-enabled", 0);
-        this.resetRows();
-        document.querySelector("*:focus")?.blur();
     }
 
     resetRows() {

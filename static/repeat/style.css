@@ -6,7 +6,6 @@
     font-size: inherit;
     font-weight: inherit;
     list-style: none;
-    line-height: 1;
     font-family: inherit;
     -webkit-font-smoothing: antialiased;
 }
@@ -172,20 +171,6 @@ fieldset.buttonGroup {
     gap: .2rem;
 }
 
-fieldset.pill button:not(:last-of-type) {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-fieldset.pill button:not(:first-of-type) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-fieldset.pill button {
-    margin-left: calc(-1 * var(--buttonBorderWidth));
-}
-
 button {
     color: var(--backgroundColor);
     background: var(--textColor);
@@ -203,7 +188,8 @@ button {
     caret-color: var(--backgroundColor);
 }
 
-button:not(.noHoverState):hover, button.active, input[type="radio"]:checked + button {
+button:not(.noHoverState):hover,
+button.active {
     background: var(--backgroundColor);
     color: var(--textColor);
 }
@@ -225,8 +211,22 @@ button label {
     cursor: cell;
 }
 
- input[type="radio"] {
-    display: none;
+.referenceNode {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+}
+
+select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+    appearance: none;
+    opacity: 0;
+    font-size: 16px;
 }
 
 /* Column */
@@ -266,6 +266,7 @@ button label {
     align-items: flex-start;
     letter-spacing: -.03ex;
     gap: 0.3ex;
+    line-height: 1;
 }
 @media (min-width: 501px) {
     #fileList {
@@ -367,33 +368,30 @@ li#currentlyLoadedList {
 }
 
 #vocabListHeader {
-    position: relative;
-    font-weight: var(--regular);
-    padding: var(--padding) 0;
-    word-break: break-word;
-    padding-top: 0;
+    padding: 0 var(--padding) var(--padding) 0;
     letter-spacing: -.06ex;
-    display: flex;
-    align-items: center;
-    font-weight: 600;
+    font-weight: var(--semi-bold);
 }
-#vocabListHeader::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    height: calc(5px * var(--progress-enabled));
-    width: calc(1% * var(--progress, 0));
-    background: var(--textColor);
-    transition: width 250ms ease-out, height 250ms 250ms ease-out;
+#vocabListHeaderText {
+    /* FIXME: Make 'gray' a variable */
+    word-break: break-word;
+    background: linear-gradient(90deg, gray 50%, var(--textColor) 50%);
+    transition: background-position 500ms ease-out;
+    background-position: -100%;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-size: 200% 100%;
+}
+[data-vocablist-mode="edit"] #vocabListHeaderText {
+    display: block;
+}
+[data-vocablist-mode="test"] #vocabListHeaderText {
+    background-position: calc(-1% * var(--progress, 100));
 }
 @media (min-width: 501px) {
     #vocabListHeader {
         border-bottom: var(--borderWidth) solid var(--textColor);
-        font-size: 1.2em;
-    }
-
-    #vocabListHeader::after {
-        bottom: 0;
+        font-size: 1.2rem;
     }
 }
 @media (max-width: 500px) {
@@ -405,19 +403,14 @@ li#currentlyLoadedList {
         border-bottom-width: 1px;
         z-index: 9;
     }
-
-    #vocabListHeader::after {
-        top: 0;
-    }
 }
 
-#vocabListHeader[contenteditable="true"] {
+[data-vocablist-mode="edit"] #vocabListHeader {
     border-bottom-style: dotted;
 }
 
-#vocabListHeader[contenteditable="true"]:focus {
+#vocabListHeaderText[contenteditable="true"]:focus {
     outline: none;
-    border-bottom-style: dotted;
 }
 
 #vocabListEntries {
