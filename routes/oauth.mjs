@@ -1,5 +1,6 @@
 import express from "express";
 import crypto from "crypto";
+import { encrypt } from "../encryption.mjs";
 import { GET, POST } from "../fetch.mjs";
 
 const router = express.Router();
@@ -60,7 +61,8 @@ router.get("/github/code/:project", async (req, res) => {
         const access_token = await exchangeCodeForAccessToken(code);
         const { login, avatar_url } = await fetchGithubUser(access_token);
 
-        res.cookie("access_token", access_token, { expires: future, secure: true, httpOnly: true });
+        res.cookie("access_token", encrypt(access_token), { expires: future, secure: true,
+                                                                             httpOnly: true });
         res.cookie("login", login, { expires: future, secure: true, httpOnly: false });
         res.cookie("avatar", avatar_url, { expires: future, secure: true, httpOnly: false  });
     }

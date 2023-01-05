@@ -1,6 +1,7 @@
 import https from "https";
 import express from "express";
 import body_parser from "body-parser";
+import { decrypt } from "../encryption.mjs";
 import { GET, POST } from "../fetch.mjs";
 
 const router = express.Router();
@@ -29,8 +30,7 @@ function fetchAccessToken(req, res, next) {
     const access_token = getCookieValFrom(req, "token");
     if (access_token === undefined)
         return res.status(500).send("NO_ACCESS_TOKEN").end();
-
-    req.access_token = access_token;
+    req.access_token = decrypt(access_token);
     next();
 }
 

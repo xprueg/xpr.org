@@ -453,6 +453,14 @@ li#currentlyLoadedList {
     border-bottom-style: dotted;
 }
 
+/*
+Add context with [].
+[Я] знаю.
+opacity: .7;
+font-style: normal;
+font-variation-settings: "slnt" -5;
+*/
+
 [data-marked-for-deletion] {
     display: none !important;
 }
